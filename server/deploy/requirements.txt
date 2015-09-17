@@ -1,0 +1,3 @@
+# requirements for get_image_id.py
+ndg-httpsclient==0.4.0
+requests==2.7.0
