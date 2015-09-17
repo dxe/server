@@ -1,0 +1,3 @@
+# requirements for code running on the server
+requests[security]==2.7.0
+boto==2.38.0

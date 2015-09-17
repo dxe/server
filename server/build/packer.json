@@ -1,0 +1,97 @@
+{
+  "builders": [
+  {
+    "type": "digitalocean",
+    "region": "sfo1",
+    "size": "512mb",
+    "image": "ubuntu-14-04-x64",
+    "snapshot_name": "dxe-image-{{timestamp}}"
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo apt-get update",
+        "sudo apt-get install -y python-dev python-pip nginx",
+        "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
+        "mkdir -p /opt/dxe/airtable",
+        "mkdir -p /var/www/maps"
+      ]
+    }, {
+      "type": "file",
+      "source": "server/build/requirements.txt",
+      "destination": "/opt/dxe/requirements.txt"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo pip install -r /opt/dxe/requirements.txt"
+      ]
+    }, {
+      "type": "file",
+      "source": "server/build/crontab",
+      "destination": "/opt/dxe/crontab"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo crontab /opt/dxe/crontab"
+      ]
+    }, {
+      "type": "file",
+      "source": "server/build/conf/nginx.conf",
+      "destination": "/tmp/nginx.conf"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/nginx.conf /etc/nginx/sites-enabled/default"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "airtable/backup_airtable.py",
+      "destination": "/opt/dxe/airtable/backup_airtable.py"
+    }, {
+      "type": "file",
+      "source": "airtable/run_backup_airtable.sh",
+      "destination": "/opt/dxe/airtable/run_backup_airtable.sh"
+    }, {
+      "type": "file",
+      "source": "config/airtable.sh",
+      "destination": "/opt/dxe/airtable/conf.sh"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/airtable/run_backup_airtable.sh"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "airtable/generate_chapter_data.py",
+      "destination": "/opt/dxe/airtable/generate_chapter_data.py"
+    }, {
+      "type": "file",
+      "source": "airtable/run_generate_chapter_data.sh",
+      "destination": "/opt/dxe/airtable/run_generate_chapter_data.sh"
+    }, {
+      "type": "file",
+      "source": "airtable/generate_chapter_data.py",
+      "destination": "/opt/dxe/airtable/generate_chapter_data.py"
+    }, {
+      "type": "file",
+      "source": "maps/chapter_map.html",
+      "destination": "/var/www/maps/chapter_map.html"
+    }, {
+      "type": "file",
+      "source": "maps/add_map.js",
+      "destination": "/var/www/maps/add_map.js"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/airtable/run_generate_chapter_data.sh",
+        "/opt/dxe/airtable/run_generate_chapter_data.sh"
+      ]
+    }
+  ]
+}
