@@ -20,7 +20,7 @@
       ]
     }, {
       "type": "file",
-      "source": "server/build/requirements.txt",
+      "source": "build/requirements.txt",
       "destination": "/opt/dxe/requirements.txt"
     }, {
       "type": "shell",
@@ -29,7 +29,7 @@
       ]
     }, {
       "type": "file",
-      "source": "server/build/crontab",
+      "source": "build/crontab",
       "destination": "/opt/dxe/crontab"
     }, {
       "type": "shell",
@@ -38,7 +38,7 @@
       ]
     }, {
       "type": "file",
-      "source": "server/build/conf/nginx.conf",
+      "source": "build/conf/nginx.conf",
       "destination": "/tmp/nginx.conf"
     }, {
       "type": "shell",
