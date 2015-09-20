@@ -42,7 +42,7 @@ def get_chapter_data():
 
             retrow["name"] = fields["Name"]
             retrow["facebook"] = fields.get("Facebook")
-            retrow["count"] = int(fields.get("Number of Members", 1))
+            retrow["email"] = fields.get("Contact Email")
             ret.append(retrow)
         else:
             # well we can't really do anything without a name and location...
