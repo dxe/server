@@ -91,7 +91,7 @@ def get_members_to_add(members):
     return members_to_add
 
 
-def main():
+def sync_airtable_to_mailing_list():
     # chapters is all of the chapters in the "Chapters" table.
     chapters = airtable.get_all_records("Chapters", "Main View")
     if not chapters:
@@ -132,4 +132,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sync_airtable_to_mailing_list()
