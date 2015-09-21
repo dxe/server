@@ -50,32 +50,21 @@ class TestAirtableToMailinglist(unittest.TestCase):
             }
         ]
         to_add = get_members_to_add(members)
-        # check "one"
-        found = False
+        to_add_dict = {}
         for m in to_add:
-            if m.airtable_id != "one":
-                continue
-            found = True
-            self.assertEqual(m.email, "blah@blah.com")
-            self.assertEqual(len(m.chapters_added), 0)
-            self.assertEqual(m.chapters_to_add, set(["one_chapter"]))
-        self.assertTrue(found)
-        # check that "two", "three", and "four" do not exist in to_add.
-        for m in to_add:
-            if m.airtable_id == "two"   or \
-               m.airtable_id == "three" or \
-               m.airtable_id == "four":
-                self.fail("member {} should not be in to_add".format(m))
-        # check "five"
-        found = False
-        for m in to_add:
-            if m.airtable_id != "five":
-                continue
-            found = True
-            self.assertEqual(m.email, "yup@email.com")
-            self.assertEqual(m.chapters_added, set(["one"]))
-            self.assertEqual(m.chapters_to_add, set(["two", "three"]))
-        self.assertTrue(found)
+            if m.airtable_id in to_add_dict:
+                self.fail("member {} should not be in to_add twice: {}".format(m, to_add))
+            to_add_dict[m.airtable_id] = m
+        self.assertEqual(to_add_dict,
+                         {"one": AddMember(airtable_id="one",
+                                           email="blah@blah.com",
+                                           chapters_added=set([]),
+                                           chapters_to_add=set(["one_chapter"])),
+                          "five": AddMember(airtable_id="five",
+                                           email="yup@email.com",
+                                           chapters_added=set(["one"]),
+                                           chapters_to_add=set(["two", "three"]))})
+
 
 if __name__ == '__main__':
     unittest.main()
