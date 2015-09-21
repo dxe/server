@@ -74,11 +74,10 @@ def get_members_to_add(members):
         if "fields" not in m:
             continue # m has no fields.
         fields = m["fields"]
-        # Skip m if they opted out of communication.
-        if fields.get(OPTED_OUT_COL, False):
-            continue
-        # Skip m if they do not have an email.
-        if "email" not in fields:
+        # Skip m if they should not be added to a mailing list because
+        # they opted out of communication or they do not have an
+        # email.
+        if fields.get(OPTED_OUT_COL, False) or "email" not in fields:
             continue
         chapters = set(fields.get(CHAPTER_ID_COL, []))
         chapters_added = set(fields.get(ADDED_TO_MAILING_LIST_COL, []))
