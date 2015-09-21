@@ -7,9 +7,7 @@ class TestAirtableToMailinglist(unittest.TestCase):
         chapters = [{"id": "one", "fields": {"Mailing List Email": "one@email.com"}},
                     {"id": "two"}]
         c_t_ml = create_chapter_to_mailing_list(chapters)
-        self.assertTrue("one" in c_t_ml)
-        self.assertEqual(c_t_ml["one"], "one@email.com")
-        self.assertFalse("two" in c_t_ml)
+        self.assertEqual(c_t_ml, {"one": "one@email.com"})
 
     def test_get_members_to_add(self):
         members = [
