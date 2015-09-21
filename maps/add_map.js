@@ -42,7 +42,8 @@ $(function(){
 
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(chapter.lat, chapter.long),
-          title: chapter.name
+          title: chapter.name,
+          icon: 'dxe.png'
         });
         marker.addListener('click', function() {
           infowindow.open(map, marker);
