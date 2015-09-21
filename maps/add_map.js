@@ -11,6 +11,8 @@ $(function(){
 
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
+    var infowindow = new google.maps.InfoWindow({});
+
     $.getJSON("chapter_data.json", function(data){
       $.each(data, function(i, chapter){
 
@@ -36,9 +38,6 @@ $(function(){
             '</div>'+
             '</div>';
 
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
 
 
         var marker = new google.maps.Marker({
@@ -47,6 +46,7 @@ $(function(){
           icon: 'dxe.png'
         });
         marker.addListener('click', function() {
+          infowindow.setContent(contentString);
           infowindow.open(map, marker);
         });
         marker.setMap(map);
