@@ -82,7 +82,7 @@ def get_members_to_add(members):
         chapters = set(fields.get(CHAPTER_ID_COL, []))
         chapters_added = set(fields.get(ADDED_TO_MAILING_LIST_COL, []))
         chapters_to_add = chapters - chapters_added
-        if len(chapters_to_add) == 0:
+        if not chapters_to_add:
             continue # m is in all the mailing lists that they belong to.
         members_to_add.append(AddMember(airtable_id=m["id"],
                                         email=fields["email"],
@@ -94,13 +94,13 @@ def get_members_to_add(members):
 def main():
     # chapters is all of the chapters in the "Chapters" table.
     chapters = airtable.get_all_records("Chapters", "Main View")
-    if len(chapters) == 0:
+    if not chapters:
         raise Exception("Expected chapter to not be empty")
     chapter_to_mailing_list = create_chapter_to_mailing_list(chapters)
-    if len(chapter_to_mailing_list) == 0:
+    if not chapter_to_mailing_list:
         raise Exception("Expected chapter_to_mailing_list to not be empty")
     members = airtable.get_all_records("All Members", "Main View")
-    if len(members) == 0:
+    if not members:
         raise Exception("Expected members to not be empty")
     members_to_add = get_members_to_add(members)
     errors = []
@@ -121,7 +121,7 @@ def main():
                     # Add member if the error is that they already exist.
                     valid_chapters_to_add.append(c)
                     print "Adding member to {} in Airtable anyway.".format(c)
-        if len(valid_chapters_to_add) == 0:
+        if not valid_chapters_to_add:
             continue # Don't update the member if they weren't added to any chapter mailing lists.
         # Update member in airtable.
         valid_chapters_to_add += m.chapters_added
