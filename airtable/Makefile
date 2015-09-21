@@ -4,4 +4,4 @@ sync:
 	python2 airtable_to_mailing_list.py
 
 test-sync:
-	python2 airtable_to_mailing_list_test.py
+	python2 test_airtable_to_mailing_list.py
