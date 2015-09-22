@@ -5,5 +5,5 @@ MAILTO=tech@directactioneverywhere.com
 #backup airtable twice a day
 0 0,12 * * * /opt/dxe/airtable/run_backup_airtable.sh
 
-#update the chapter map data twice a day
-0 0,12 * * * /opt/dxe/airtable/run_generate_chapter_data.sh
+#update the chapter map data hourly
+0 * * * * /opt/dxe/airtable/run_generate_chapter_data.sh
