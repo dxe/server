@@ -22,7 +22,7 @@ $(function(){
         var siteString = "";
 
         if(chapter["website"]){
-          siteString = "<li>Check out <a target='_blank' href='" + chapter.website + "'>our website!</a></li>";
+          siteString = "<li>Check out <a target='_blank' href='" + chapter.website + "'>our website</a>!</li>";
         }
         if(chapter["email"]){
           contactString = "<li>Contact: <a href='mailto:" + chapter.email + "'>Email.</a> </li>";
@@ -40,6 +40,7 @@ $(function(){
             '<h1 id="firstHeading" class="firstHeading"> DxE ' + chapter.name + '</h1>'+
             '<div id="bodyContent">'+
             '<ul>'+
+              siteString +
               contactString +
               fbString +
               ytString +
