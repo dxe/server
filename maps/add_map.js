@@ -20,6 +20,7 @@ $(function(){
         var fbString = "";
         var ytString = "";
         var siteString = "";
+        var organizersString = "";
 
         if(chapter["website"]){
           siteString = "<li>Check out <a target='_blank' href='" + chapter.website + "'>our website</a>!</li>";
@@ -33,13 +34,16 @@ $(function(){
         if(chapter["youtube"]){
           ytString = "<li><a target='_blank' href='" + chapter.youtube + "'>YouTube.</a></li>";
         }
-
+        if(chapter["organizers"]){
+          organizersString = "<li>Meet <a target='_blank' href='" + chapter.organizers + "'>our organizers</a>!</li>";
+        }
 
         var contentString = '<div id="content">'+
             '<div id="siteNotice">'+
             '<h1 id="firstHeading" class="firstHeading"> DxE ' + chapter.name + '</h1>'+
             '<div id="bodyContent">'+
             '<ul>'+
+              organizersString +
               siteString +
               contactString +
               fbString +

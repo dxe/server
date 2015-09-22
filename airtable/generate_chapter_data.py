@@ -44,6 +44,7 @@ def get_chapter_data():
             retrow["facebook"] = fields.get("Facebook")
             retrow["email"] = fields.get("Contact Email")
             retrow["youtube"] = fields.get("YouTube Channel")
+            retrow["organizers"] = fields.get("Organizers Page")
 
             # special case: DxE SLC has their own website. They're likely to be
             # the only one to have their own for a while, so it's not worth it
