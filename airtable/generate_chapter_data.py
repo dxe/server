@@ -43,6 +43,15 @@ def get_chapter_data():
             retrow["name"] = fields["Name"]
             retrow["facebook"] = fields.get("Facebook")
             retrow["email"] = fields.get("Contact Email")
+            retrow["youtube"] = fields.get("YouTube Channel")
+
+            # special case: DxE SLC has their own website. They're likely to be
+            # the only one to have their own for a while, so it's not worth it
+            # to make a new column for website. We'll artificially inject their
+            # site here.
+            if fields["Name"] == "Salt Lake City":
+                retrow["website"] = "http://dxeslc.org/"
+
             ret.append(retrow)
         else:
             # well we can't really do anything without a name and location...

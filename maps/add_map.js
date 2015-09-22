@@ -16,16 +16,22 @@ $(function(){
     $.getJSON("chapter_data.json", function(data){
       $.each(data, function(i, chapter){
 
+        var contactString = "<li>Email the <a href='mailto:mentoring@directactioneverywhere.com'>mentoring network</a> to be put in contact!</li>";
         var fbString = "";
-        var contactString = "Email the <a href='mailto:mentoring@directactioneverywhere.com'>mentoring network</a> to be put in contact!<br>";
+        var ytString = "";
+        var siteString = "";
 
+        if(chapter["website"]){
+          siteString = "<li>Check out <a target='_blank' href='" + chapter.website + "'>our website!</a></li>";
+        }
         if(chapter["email"]){
-          contactString = "Contact: <a href='mailto:" + chapter.email + "'>Email.</a> ";
-            // TODO html escaping stuff
+          contactString = "<li>Contact: <a href='mailto:" + chapter.email + "'>Email.</a> </li>";
         }
         if(chapter["facebook"]){
-          fbString = "<a target='_blank' href='" + chapter.facebook + "'>Facebook.</a>";
-            // TODO html escaping stuff
+          fbString = "<li><a target='_blank' href='" + chapter.facebook + "'>Facebook.</a></li>";
+        }
+        if(chapter["youtube"]){
+          ytString = "<li><a target='_blank' href='" + chapter.youtube + "'>YouTube.</a></li>";
         }
 
 
@@ -33,11 +39,14 @@ $(function(){
             '<div id="siteNotice">'+
             '<h1 id="firstHeading" class="firstHeading"> DxE ' + chapter.name + '</h1>'+
             '<div id="bodyContent">'+
-            '<p>' + contactString + fbString + '</p>'
+            '<ul>'+
+              contactString +
+              fbString +
+              ytString +
+            '</ul>'+
             '</div>'+
             '</div>'+
             '</div>';
-
 
 
         var marker = new google.maps.Marker({
