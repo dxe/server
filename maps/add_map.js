@@ -43,7 +43,7 @@ $(function(){
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(chapter.lat, chapter.long),
           title: chapter.name,
-          icon: 'dxe.png'
+          icon: 'dxe_marker.png'
         });
         marker.addListener('click', function() {
           infowindow.setContent(contentString);

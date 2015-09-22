@@ -87,6 +87,10 @@
       "source": "maps/add_map.js",
       "destination": "/var/www/maps/add_map.js"
     }, {
+      "type": "file",
+      "source": "maps/dxe_marker.png",
+      "destination": "/var/www/maps/dxe_marker.png"
+    }, {
       "type": "shell",
       "inline": [
         "sudo chmod +x /opt/dxe/airtable/run_generate_chapter_data.sh",
