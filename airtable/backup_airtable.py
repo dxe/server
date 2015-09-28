@@ -56,7 +56,7 @@ def backup_all_tables():
     conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY)
     b = conn.get_bucket(S3_BUCKET)
     k = Key(b)
-    k.key = "airtable/" + fname
+    k.key = S3_BACKUP_DIR + fname
     k.set_contents_from_filename(fpath)
 
 
