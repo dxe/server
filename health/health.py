@@ -36,8 +36,8 @@ def chapter_map_data_updating():
     except os.error:
         return "Failure: unable to read chapter_data.json"
     if time_since_last_update < CHAPTER_MAP_TIMING_WINDOW:
-        return "Success: last updated {} ago.".format(time_since_last_update)
-    return "Failure: last updated {} ago.".format(time_since_last_update)
+        return "Success: last updated {} ago".format(time_since_last_update)
+    return "Failure: last updated {} ago".format(time_since_last_update)
 
 
 def chapter_map_page_loads():
