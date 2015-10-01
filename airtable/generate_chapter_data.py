@@ -22,7 +22,7 @@ def get_lat_long(s):
             return float(loc["lat"]), float(loc["lng"])
         else:
             # well we can't get a lat long, we give up...
-            print "failed to get lat long from address {}".format(s)
+            print "failed to get lat long from address {}. Full response:\n{}".format(s, r)
             return None, None
 
 

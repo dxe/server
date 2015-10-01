@@ -13,9 +13,10 @@
       "inline": [
         "sleep 30",
         "sudo apt-get update",
-        "sudo apt-get install -y python-dev python-pip nginx",
+        "sudo apt-get install -y python-dev python-pip nginx upstart",
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
         "mkdir -p /opt/dxe/airtable",
+        "mkdir -p /opt/dxe/health",
         "mkdir -p /var/www/maps"
       ]
     }, {
@@ -95,6 +96,29 @@
       "inline": [
         "sudo chmod +x /opt/dxe/airtable/run_generate_chapter_data.sh",
         "/opt/dxe/airtable/run_generate_chapter_data.sh"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "health/health.py",
+      "destination": "/opt/dxe/health/health.py"
+    }, {
+      "type": "file",
+      "source": "health/__init__.py",
+      "destination": "/opt/dxe/health/__init__.py"
+    }, {
+      "type": "file",
+      "source": "health/run_health.sh",
+      "destination": "/opt/dxe/health/run_health.sh"
+    }, {
+      "type": "file",
+      "source": "build/conf/upstart-health.conf",
+      "destination": "/etc/init/health.conf"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/health/run_health.sh"
       ]
     }
   ]
