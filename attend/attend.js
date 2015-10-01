@@ -10,8 +10,9 @@ $("#select_chapter").on('change', function() {
   chapterSelected(this.value);
 });
 
-// select chapter -- load relevent events into the event selector
-// or show link to event create page if none exist
+/* select chapter -- load relevent events into the event selector
+ * or show link to event create page if none exist
+ */
 function chapterSelected(chapter_id) {
   console.log("chapterSelected(" + chapter_id + ") called");
 
@@ -37,7 +38,7 @@ function chapterSelected(chapter_id) {
       name_to_id[fullname] = members[index].id;
     }
   }
-  console.log(name_to_id);
+  // console.log(name_to_id);
   $("#input_peeps").autocomplete({ source:Object.keys(name_to_id) });
 }
 
@@ -60,7 +61,6 @@ $('#input_peeps').bind("enterKey",function(event){
   var id = fullname.replace(/ /g,"_");
   if (fullname in name_to_id) { id = name_to_id[fullname]; }
   else { new_members[id] = fullname; }
-  console.log("id = [" + id + "]");
 
   // if they're already in the list -- error
   if (id in attendees) {
@@ -86,6 +86,9 @@ $('#input_peeps').bind("enterKey",function(event){
     $("#" + remove_id).remove();
     delete attendees[remove_id];
   });
+
+  // enable submit button
+  $( "#submit_button").button( "option", "disabled", false );
  
 });
 
@@ -123,8 +126,14 @@ $( "form" ).submit(function( event ) {
   form_data.attendees  	= attendees;
   form_data.new_members	= new_members;
    
-  console.log("form data = ");
-  console.log(form_data);
+  // console.log("form data = ");
+  // console.log(form_data);
+
+  // disable the submit button
+  $( "#submit_button" ).button( "option", "disabled", true );
+  // start progress bar
+  $( "#progressbar" ).progressbar({ value: false });
+  $( "#progressbar").show();
 
   $.ajax({
     type:    'POST',
@@ -132,6 +141,8 @@ $( "form" ).submit(function( event ) {
     data:    {'attend': JSON.stringify(form_data)},
     success: function(data) {
        console.log("response: "+data);
-       console.log('success');
+       $( "#progressbar").hide();
+       $("#result_ul").append(data);
+       $("#result_div").show();
     }});
 });
