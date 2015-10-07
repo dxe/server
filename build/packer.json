@@ -50,6 +50,10 @@
 
     {
       "type": "file",
+      "source": "airtable/airtable.py",
+      "destination": "/opt/dxe/airtable/airtable.py"
+    }, {
+      "type": "file",
       "source": "airtable/backup_airtable.py",
       "destination": "/opt/dxe/airtable/backup_airtable.py"
     }, {
