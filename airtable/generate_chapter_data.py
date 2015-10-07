@@ -7,7 +7,7 @@ import sys
 
 import requests
 
-from backup_airtable import get_all_records
+from airtable import get_all_records
 
 GEOCODING_RETRIES = 4
 
