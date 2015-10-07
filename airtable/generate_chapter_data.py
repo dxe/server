@@ -9,6 +9,8 @@ import requests
 
 from backup_airtable import get_all_records
 
+GEOCODING_RETRIES = 4
+
 
 def get_lat_long(s):
     match = re.search(r'\((\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)\)', s)
@@ -17,6 +19,15 @@ def get_lat_long(s):
     else:  # fuuuuck it's an address, ask google about how to make that a lat long
         payload = {"address": s}
         r = requests.get("http://maps.googleapis.com/maps/api/geocode/json", params=payload).json()
+
+        tries = 1
+        while r["status"] == "UNKNOWN_ERROR" and tries < GEOCODING_RETRIES:
+            tries += 1
+            r = requests.get("http://maps.googleapis.com/maps/api/geocode/json", params=payload).json()
+        if r["status"] == "UNKNOWNN_ERROR":
+            print "Got UNKNOWN_ERROR {} times on address {}. Gave up. Full response:\n{}".format(GEOCODING_RETRIES, s, r)
+            return None, None
+
         if len(r["results"]) > 0:
             loc = r["results"][0]["geometry"]["location"]
             return float(loc["lat"]), float(loc["lng"])
