@@ -24,7 +24,7 @@ def get_lat_long(s):
         while r["status"] == "UNKNOWN_ERROR" and tries < GEOCODING_RETRIES:
             tries += 1
             r = requests.get("http://maps.googleapis.com/maps/api/geocode/json", params=payload).json()
-        if r["status"] == "UNKNOWNN_ERROR":
+        if r["status"] == "UNKNOWN_ERROR":
             print "Got UNKNOWN_ERROR {} times on address {}. Gave up. Full response:\n{}".format(GEOCODING_RETRIES, s, r)
             return None, None
 
