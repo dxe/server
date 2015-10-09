@@ -1,9 +1,154 @@
 <?php
   // todo; this should really be based on chapter
+  // Although it looks like airtable doesn't care about timezones?
   date_default_timezone_set('America/Los_Angeles');
 
-  // todo: google login verification
+  session_start();
+  require_once ('/Users/lmz/Sites/dxe/google-api-php-client/src/Google/autoload.php');
 
+  /************************************************
+    ATTENTION: Fill in these values! Make sure
+    the redirect URI is to this page, e.g:
+    http://localhost:8080/user-example.php
+   ************************************************/
+  require_once('../config/googleCredentials.php');
+  $redirect_uri  = 'http://lmzdxetech.com/attend.php';
+
+  $client = new Google_Client();
+  $client->setClientId($client_id);
+  $client->setClientSecret($client_secret);
+  $client->setRedirectUri($redirect_uri);
+  $client->setScopes('email');
+  $client->addScope(Google_Service_Directory::ADMIN_DIRECTORY_GROUP_MEMBER_READONLY);
+
+  /************************************************
+    Service user authentication
+    Service user is necessary for figuring out group membership
+   ************************************************/
+  try {
+    if (strpos($service_client_id, "googleusercontent") == false
+        || !strlen($service_account_name)
+        || !strlen($service_key_file_location)) {
+      echo missingServiceAccountDetailsWarning();
+      exit;
+    }
+    
+    $service_client = new Google_Client();
+    $service_client->setApplicationName("DxE Attendance");
+    $book_service = new Google_Service_Books($service_client);
+    $directory_service = new Google_Service_Directory($service_client);
+    
+    /************************************************
+      If we have an access token, we can carry on.
+      Otherwise, we'll get one with the help of an
+      assertion credential. In other examples the list
+      of scopes was managed by the Client, but here
+      we have to list them manually. We also supply
+      the service account
+     ************************************************/
+    if (isset($_SESSION['service_token'])) {
+      $service_client->setAccessToken($_SESSION['service_token']);
+    }
+    $service_key = file_get_contents($service_key_file_location);
+    $service_cred = new Google_Auth_AssertionCredentials(
+        $service_account_name,
+        array(Google_Service_Directory::ADMIN_DIRECTORY_GROUP_MEMBER_READONLY),
+        $service_key
+    );
+    // impersonate a super admin
+    $service_cred->sub = $superadmin;
+
+    $service_client->setAssertionCredentials($service_cred);
+    if ($service_client->getAuth()->isAccessTokenExpired()) {
+      $service_client->getAuth()->refreshTokenWithAssertion($service_cred);
+    }
+    $_SESSION['service_token'] = $service_client->getAccessToken();
+    error_log("service_client AOK");
+
+  } catch (Exception $e) {
+    error_log('Caught service_client exception: ' . $e->getMessage());
+  }
+
+  /************************************************
+    If we're logging out we just need to clear our
+    local access token in this case
+   ************************************************/
+  if (isset($_REQUEST['logout'])) {
+    unset($_SESSION['access_token']);
+  }
+
+  /************************************************
+    If we have a code back from the OAuth 2.0 flow,
+    we need to exchange that with the authenticate()
+    function. We store the resultant access token
+    bundle in the session, and redirect to ourself.
+   ************************************************/
+  if (isset($_GET['code'])) {
+    $client->authenticate($_GET['code']);
+    $_SESSION['access_token'] = $client->getAccessToken();
+    $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+    header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+  }
+
+  /************************************************
+    If we have an access token, we can make
+    requests, else we generate an authentication URL.
+   ************************************************/
+  if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+    $client->setAccessToken($_SESSION['access_token']);
+  } else {
+    $authUrl = $client->createAuthUrl();
+  }
+
+  /************************************************
+    If we're signed in we can go ahead and retrieve
+    the ID token, which is part of the bundle of
+    data that is exchange in the authenticate step
+    - we only need to do a network call if we have
+    to retrieve the Google certificate to verify it,
+    and that can be cached.
+   ************************************************/
+  try {
+    if ($client->getAccessToken()) {
+      $_SESSION['access_token'] = $client->getAccessToken();
+      $token_data = $client->verifyIdToken()->getAttributes();
+
+      // Is logged in user part of the given group?
+      // This will throw an exception if not
+      $response = $directory_service->members->get($attendance_group_key, 
+                                                   $token_data['payload']['sub']);
+      // For good measure though...
+      assert(($response->{'role'} == 'OWNER') || ($response->{'role'} == 'MANAGER') || ($response->{'role'} == 'MEMBER'));
+      assert($response->{'type'} == 'USER');
+      // echo "<pre>" . print_r($response, true) . "</pre>";
+    }
+  } catch (Exception $e) {
+    error_log('Caught exception: ' . $e->getMessage());
+    error_log(print_r($token_data, True));
+    $token_data = NULL;
+    $authUrl = $client->createAuthUrl();
+  } 
+
+  echo get_page_header("DxE Attendance");
+  if (strpos($client_id, "googleusercontent") == false) {
+    echo missingClientSecretsWarning();
+    exit;
+  }
+
+  print '<div class="box">';
+  
+  if (!isset($token_data) || isset($authUrl)) {
+    print "<div class='request'><a class='login' href='" . $authUrl . "'>Login</a></div>";
+    print "</div>\n"; // box 
+    print get_page_footer();
+    exit;
+  } else {
+    print '<div class="request">';
+    print 'Welcome, ' . $token_data['payload']['email'] . '!   ';
+    echo "<a class='logout' href='?logout'>Logout</a>";
+    print '</div>';
+  }
+  print '</div>'; // box
 
   require_once('../config/airtableCredentials.php');
   $airtable_url = "https://api.airtable.com/v0/" . $AIRTABLE_BASE_ID;
@@ -86,11 +231,14 @@
     if (!is_null($airtable_ch)) { curl_close($airtable_ch); }
     return;
   }
-?>
 
-<!DOCTYPE html>
+  /* Return string for page header.
+   */
+  function get_page_header($title) {
+    $header = '<!DOCTYPE html>
 <html>
 <head>
+<title>' . $title . '</title>
 <script src="jquery-1.11.3.min.js"></script>
 <script src="jquery-ui-1.11.3.min.js"></script>
 <script src="jquery-dateFormat.min.js"></script>
@@ -98,9 +246,14 @@
 <link rel="stylesheet" type="text/css" href="attend.css">
 </head>
 <body>
+';
+    return $header;
+  }
+  
+  function get_page_footer() {
+    return '</body></html>';
+  }
 
-
-<?php
   // todo: move this file to a place not accessible on the server
   $airtable_cache_str = file_get_contents("members.json");
   $airtable_cache = json_decode($airtable_cache_str, true);
@@ -234,7 +387,7 @@ chapterSelected("<?php if (is_array($chapters[0])) { print($chapters[0]['id']); 
 <?php
   // close cURL resource, and free up system resources
   if (!is_null($airtable_ch)) { curl_close($airtable_ch); }
+
+  echo get_page_footer();
 ?>
-</body>
-</html>
 
