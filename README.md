@@ -1,4 +1,4 @@
-#Server Build, Deploy, and Connect
+#Server Build, Deploy, Connect, and Test Server
 
 
 ##What's on the server?
@@ -64,7 +64,8 @@ Droplets](https://www.terraform.io/docs/providers/do/r/droplet.html).
 
 ##Build+Deploy+Connect Process
 In order to build and deploy, you need to be authorized to spin up droplets for
-the build and deploy steps. Get the fancy shmancy DigitalOcean Personal Access
+the build and deploy steps. Running servers costs money, so that's why you aren't
+authorized already. Get the fancy shmancy DigitalOcean Personal Access
 token from someone else, and add this to your .bashrc (BUT NOT IF YOU KEEP THAT
 IN VERSION CONTROL):
 ```
@@ -113,19 +114,25 @@ Outputs:
   ip = <ip address>
 ```
 
+To undeploy, or destroy, the server and dns record, run:
+
+```
+terraform destroy
+```
+
 ###Connect
 To ssh into the server:
 ```
 ssh root@<ip address> -i ~/.ssh/dxe_do_id_rsa
 ```
 
-There are two reasons you should be sshing into the server:
+There is one reason you should be sshing into the production server:
 
-1. Testing what commands you need to add to the build process to get the server
-   into the state you want. You should then add those steps to the build
-   process, build it, and deploy it. If you do something to the live server that
-   you want live through the next deploy, you have to do that.
-2. Diagnosing problems with the live server.
+1. Diagnosing problems with the live server.
+
+If you want to test what commands you need to add to the build process to
+add your new feature, bring up a test server and connect to that instead of the
+production server. See below for instructions on setting up a test server.
 
 ####Hold up, what ssh-key?
 You need do make an ssh
@@ -143,3 +150,57 @@ the [deploy/deploy.tf](deploy/deploy.tf) terraform config file and redeploy.
 If you can't afford to redeploy, have someone else ssh in and add the public key
 to the end of the file ~/.ssh/authorized_keys. This won't work after the next
 deploy unless [deploy.tf](deploy/deploy.tf) is updated as well.
+
+
+##Test Server
+Before trying to do this, please read the Background section. That will give you
+more context to understand how this works.
+
+We want to bring up a server that you can play around with without disturbing
+the production server. All of the above steps are the same with the exception of
+the deploy step. Terraform keeps its knowledge of the production server in the
+[terraform.tfstate](deploy/terraform.tfstate) file. If we made a change to
+[deploy.tf](deploy/deploy.tf) and then ran `terraform apply`, it would bring
+down the production server, and bring a new one up with your changes. We
+don't want that, we want to leave production alone and bring up another server.
+
+First, so you don't forget that this is a test server and not the produciton
+server, run:
+
+```
+mv deploy test_deploy
+```
+
+To tell terraform to forget about the production server, run:
+
+```
+cd test_deploy/
+rm terraform.tfstate*
+```
+
+To tell ferraform not to change the DNS record (that points dxetech.org to the
+production server ip), run:
+
+```
+rm dns.tf
+```
+
+Finally, edit deploy.tf and change the server name from `"dxetech-server-production"`
+to `"dxetech-server-test"` so it's easy to see on the digitalocean console that
+the server is a test server, and not prodcution.
+
+Now we're all set to deploy the test server, so run:
+
+```
+terraform apply
+```
+
+Since it costs money to keep servers up, when you're not actively using/testing it,
+please bring down the server with:
+
+```
+terraform deploy
+```
+
+It's not much money so don't be paranoid or inconvenience yourself for that
+reason, but be conscious.
