@@ -1,5 +1,28 @@
 #Server Build, Deploy, Connect, and Test Server
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
+
+- [What's on the server?](#whats-on-the-server)
+  - [Cron jobs](#cron-jobs)
+  - [The chapter map!](#the-chapter-map)
+- [Background](#background)
+  - [Build](#build)
+    - [Changing the build](#changing-the-build)
+  - [Deploy](#deploy)
+    - [Changing the deploy](#changing-the-deploy)
+- [Build+Deploy+Connect Process](#builddeployconnect-process)
+  - [Build](#build-1)
+  - [Deploy](#deploy-1)
+  - [Connect](#connect)
+    - [Hold up, what ssh-key?](#hold-up-what-ssh-key)
+- [Test Server](#test-server)
+- [Test Domain](#test-domain)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
 
 ##What's on the server?
 ###Cron jobs
@@ -204,3 +227,24 @@ terraform deploy
 
 It's not much money so don't be paranoid or inconvenience yourself for that
 reason, but be conscious.
+
+##Test Subdomain
+
+In some situations, testing requires a server has a domain instead of just an IP
+address. We can use a subdomain on dxetech.org to do that, which usually
+suffices. Make a file `testdns.tf` in test_deploy/, and make this its contents:
+
+```
+resource "digitalocean_record" "test" {
+    domain = "dxetech.org"
+    type = "A"
+    name = "test"
+    value = "${digitalocean_droplet.server.ipv4_address}"
+}
+```
+
+Terraform considers this dns record to be a "resource" like the server, so when
+you run `terraform apply` and `terraform destroy`, terraform will create and
+destroy the dns subdomain record.
+
+Hurray! Now [test.dxetech.org](test.dxetech.org) points at your test server! <3
