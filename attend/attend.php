@@ -360,12 +360,12 @@
   
   <div id="add_error" style="color:red; padding:10px" hidden=true></div>
 
-  <button id="submit_button">Submit to Airtable DB</button>
-
   <div id="progressbar" hidden=true></div>
   <div id="result_div" hidden=true><ul id="result_ul"></ul></div>
 
   <div><ul id="peep_list"></ul></div>
+
+  <button id="submit_button">Submit to Airtable DB</button>
 
 </form>
 

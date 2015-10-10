@@ -3,6 +3,7 @@
 var name_to_id = {};
 var attendees  = {};  // id -> full name
 var new_members= {};  // id -> full name
+var last_attendee = '';
 // console.log("members:");
 // console.log(members[0]);
 
@@ -40,7 +41,7 @@ function chapterSelected(chapter_id) {
   }
   // console.log(name_to_id);
   $("#input_peeps").autocomplete({ source:Object.keys(name_to_id),
-                                   select:function(event,ui) { enter_peep(); return false; }
+                                   select:function(event,ui) { enter_peep(ui.item.value); return false; }
                                   });
 }
 
@@ -51,11 +52,11 @@ function chapterSelected(chapter_id) {
  * - add them to the DOM list
  */
 $('#input_peeps').bind("enterKey",function(event){
-  enter_peep();
+  var fullname = $( "#input_peeps" ).val();
+  enter_peep(fullname);
 });
 
-function enter_peep() {
-  var fullname = $( "#input_peeps" ).val();
+function enter_peep(fullname) {
   // it's only whitespace
   if (/^\s*$/.test(fullname)) { return; }
   console.log("inputted [" + fullname + "]");
@@ -70,13 +71,17 @@ function enter_peep() {
 
   // if they're already in the list -- error
   if (id in attendees) {
-    $("#add_error").html("'" + fullname + "' is already an attendee");
-    $("#add_error").show();
+    // sometimes it gets triggered twice in a row - don't error for that
+    if (id != last_attendee) {
+      $("#add_error").html("'" + fullname + "' is already an attendee");
+      $("#add_error").show();
+    }
     return;
   }
 
   // add them to my list
   attendees[id] = fullname;
+  last_attendee = id;
 
   // add them to the DOM list
   var elem = '<li id="' + id + '">';

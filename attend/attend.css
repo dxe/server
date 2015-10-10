@@ -1,8 +1,17 @@
 
 body {
   font-family: "Vida", Helvetica, sans-serif;
+  font-size: 32px;
+}
+
+select {
+  font-size: 32px;
 }
 
 label {
   padding: 4px;
+}
+
+a.login {
+  font-size: 128px;
 }
