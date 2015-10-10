@@ -15,8 +15,12 @@
         "sudo apt-get update",
         "sudo apt-get install -y python-dev python-pip nginx",
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
+        "sudo apt-get install -y php5-fpm",
+        "sudo apt-get install -y php5-curl",
         "mkdir -p /opt/dxe/airtable",
-        "mkdir -p /var/www/maps"
+        "mkdir -p /var/www/maps",
+        "mkdir -p /usr/share/php/attend",
+        "mkdir -p /var/www/attend/images"
       ]
     }, {
       "type": "file",
@@ -91,6 +95,71 @@
       "inline": [
         "sudo chmod +x /opt/dxe/airtable/run_generate_chapter_data.sh",
         "/opt/dxe/airtable/run_generate_chapter_data.sh"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "airtable/generate_members_data.py",
+      "destination": "/opt/dxe/airtable/generate_members_data.py"
+    }, {
+      "type": "file",
+      "source": "airtable/run_generate_members_data.sh",
+      "destination": "/opt/dxe/airtable/run_generate_members_data.sh"
+    }, {
+      "type": "file",
+      "source": "attend/attend.css",
+      "destination": "/var/www/attend/attend.css"
+    }, {
+      "type": "file",
+      "source": "attend/attend.js",
+      "destination": "/var/www/attend/attend.js"
+    }, {
+      "type": "file",
+      "source": "attend/attend.php",
+      "destination": "/var/www/attend/attend.php"
+    }, {
+      "type": "file",
+      "source": "attend/jquery-1.11.3.min.js",
+      "destination": "/var/www/attend/jquery-1.11.3.min.js"
+    }, {
+      "type": "file",
+      "source": "attend/jquery-ui-1.11.3.min.css",
+      "destination": "/var/www/attend/jquery-ui-1.11.3.min.css"
+    }, {
+      "type": "file",
+      "source": "attend/jquery-ui-1.11.3.min.js",
+      "destination": "/var/www/attend/jquery-ui-1.11.3.min.js"
+    }, {
+      "type": "file",
+      "source": "attend/jquery-dateFormat.min.js",
+      "destination": "/var/www/attend/jquery-dateFormat.min.js"
+    }, {
+      "type": "file",
+      "source": "attend/images/",
+      "destination": "/var/www/attend/images"
+    }, {
+      "type": "file",
+      "source": "config/airtableCredentials.php",
+      "destination": "/usr/share/php/attend/airtableCredentials.php"
+    }, {
+      "type": "file",
+      "source": "config/googleCredentials.php",
+      "destination": "/usr/share/php/attend/googleCredentials.php"
+    }, {
+      "type": "file",
+      "source": "config/Attendance-f0f8c33aa813.p12",
+      "destination": "/usr/share/php/attend/Attendance-f0f8c33aa813.p12"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/airtable/run_generate_members_data.sh",
+        "/opt/dxe/airtable/run_generate_members_data.sh",
+        "sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php5/fpm/php.ini",
+        "wget https://github.com/google/google-api-php-client/archive/1.1.5.tar.gz",
+        "gunzip 1.1.5.tar.gz",
+        "tar xvf 1.1.5.tar",
+        "mv google-api-php-client-1.1.5 /usr/share/php/google-api-php-client"
       ]
     }
   ]

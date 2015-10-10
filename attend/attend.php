@@ -4,15 +4,10 @@
   date_default_timezone_set('America/Los_Angeles');
 
   session_start();
-  require_once ('/Users/lmz/Sites/dxe/google-api-php-client/src/Google/autoload.php');
+  require_once ('google-api-php-client/src/Google/autoload.php');
 
-  /************************************************
-    ATTENTION: Fill in these values! Make sure
-    the redirect URI is to this page, e.g:
-    http://localhost:8080/user-example.php
-   ************************************************/
-  require_once('../config/googleCredentials.php');
-  $redirect_uri  = 'http://lmzdxetech.com/attend.php';
+  require_once('attend/googleCredentials.php');
+  $redirect_uri  = 'http://' . $_SERVER['HTTP_HOST'] . '/attend/';
 
   $client = new Google_Client();
   $client->setClientId($client_id);
@@ -150,7 +145,7 @@
   }
   print '</div>'; // box
 
-  require_once('../config/airtableCredentials.php');
+  require_once('attend/airtableCredentials.php');
   $airtable_url = "https://api.airtable.com/v0/" . $AIRTABLE_BASE_ID;
   $airtable_ch  = NULL;
 
@@ -255,7 +250,7 @@
   }
 
   // todo: move this file to a place not accessible on the server
-  $airtable_cache_str = file_get_contents("members.json");
+  $airtable_cache_str = file_get_contents("/usr/share/php/attend/members_data.json");
   $airtable_cache = json_decode($airtable_cache_str, true);
 
   /* function that returns all the records in the given view of the given table
