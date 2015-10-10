@@ -18,7 +18,7 @@
   - [Connect](#connect)
     - [Hold up, what ssh-key?](#hold-up-what-ssh-key)
 - [Test Server](#test-server)
-- [Test Domain](#test-subdomain)
+- [Test Subdomain](#test-subdomain)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
