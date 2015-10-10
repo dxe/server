@@ -39,7 +39,9 @@ function chapterSelected(chapter_id) {
     }
   }
   // console.log(name_to_id);
-  $("#input_peeps").autocomplete({ source:Object.keys(name_to_id) });
+  $("#input_peeps").autocomplete({ source:Object.keys(name_to_id),
+                                   select:function(event,ui) { enter_peep(); return false; }
+                                  });
 }
 
 /* On enter in the person input:
@@ -49,9 +51,13 @@ function chapterSelected(chapter_id) {
  * - add them to the DOM list
  */
 $('#input_peeps').bind("enterKey",function(event){
+  enter_peep();
+});
+
+function enter_peep() {
   var fullname = $( "#input_peeps" ).val();
   // it's only whitespace
-  if (/^\s+$/.test(fullname)) { return; }
+  if (/^\s*$/.test(fullname)) { return; }
   console.log("inputted [" + fullname + "]");
  
   // clear the widget
@@ -90,7 +96,7 @@ $('#input_peeps').bind("enterKey",function(event){
   // enable submit button
   $( "#submit_button").button( "option", "disabled", false );
  
-});
+}
 
 /* On enter in the event input:
  * - shift focus to the person input
