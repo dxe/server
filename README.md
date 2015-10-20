@@ -214,8 +214,8 @@ rm dns.tf
 ```
 
 Finally, edit deploy.tf and change the server name from `"dxetech-server-production"`
-to `"dxetech-server-test"` so it's easy to see on the digitalocean console that
-the server is a test server, and not prodcution.
+to `"dxetech-server-test-feature-name"` so it's easy to see on the digitalocean console that
+the server is a test server for this or that feature, and not prodcution.
 
 Now we're all set to deploy the test server, so run:
 
