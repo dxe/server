@@ -1,0 +1,23 @@
+<div id='count'>
+  9 million billion trillion hundred
+</div>
+<script>
+function updateCount() {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+      if(xmlhttp.status == 200) {
+        document.getElementById("count").innerHTML = JSON.parse (xmlhttp.responseText)["count"];
+      }
+      else {
+        alert(xmlhttp.status);
+        alert(xmlhttp.responseText);
+      }
+    }
+  }
+
+  xmlhttp.open("GET", "http://dxetech.org/facebook/attending_event?event_id=122831071398421", true);
+  xmlhttp.send();
+}
+updateCount();
+</script>

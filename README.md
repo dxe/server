@@ -5,8 +5,9 @@
 <!-- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
 
 - [What's on the server?](#whats-on-the-server)
-  - [Cron jobs](#cron-jobs)
-  - [The chapter map!](#the-chapter-map)
+  - [Cron Jobs](#cron-jobs)
+  - [The Chapter Map!](#the-chapter-map)
+  - [Facebook Data API Proxy](#facebook-data-api-proxy)
 - [Background](#background)
   - [Build](#build)
     - [Changing the build](#changing-the-build)
@@ -25,16 +26,20 @@
 
 
 ##What's on the server?
-###Cron jobs
+###Cron Jobs
 See [build/crontab](build/crontab).
 
 * Airtable backup to S3.
 * Chapter map data update.
 
-###The chapter map!
+###The Chapter Map!
 [A map](http://dxetech.org/maps/chapter_map.html) of all the DxE chapters, pulled
 from our activist databsae.
 
+###Facebook Data API Proxy
+A proxy to make a subset of requests to the [Facebook Graph
+API](https://developers.facebook.com/docs/graph-api).
+Example.](http://dxetech.org/facebook/attending_event?event_id=122831071398421)
 
 
 ##Background
