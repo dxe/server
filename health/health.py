@@ -8,8 +8,8 @@ match for the success strings like "Success: blah blah". Therefore if
 the text of the strings here change, the Uptime Robot string matching
 rules would need to be updated.
 """
-import os
 import datetime
+import os
 
 from boto.s3.connection import S3Connection
 from flask import Flask, jsonify
@@ -24,9 +24,20 @@ S3_BACKUP_DIR = "airtable"
 S3_ACCESS_KEY = os.environ["AIRTABLE_BACKUP_AWS_ACCESS_KEY_ID"]
 S3_SECRET_KEY = os.environ["AIRTABLE_BACKUP_AWS_SECRET_ACCESS_KEY"]
 CHAPTER_DATA_PATH = "/var/www/maps/chapter_data.json"
-CHAPTER_MAP_URL = "http://dxetech.org/maps/chapter_map.html"
+CHAPTER_MAP_URL = "http://{}/maps/chapter_map.html"
 
 app = Flask(__name__)
+
+
+def this_server_ip():
+    """Get the ip address of this server."""
+    try:
+        # Using digitalocean's metadata api
+        # https://www.digitalocean.com/community/tutorials/an-introduction-to-droplet-metadata
+        r = requests.get("http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address", timeout=.5)
+        return r.text
+    except:
+        return "localhost"
 
 
 def chapter_map_data_updating():
@@ -43,7 +54,7 @@ def chapter_map_data_updating():
 def chapter_map_page_loads():
     """Test to see if the chapter map page loads."""
     try:
-        r = requests.get(CHAPTER_MAP_URL, timeout=1)
+        r = requests.get(CHAPTER_MAP_URL.format(this_server_ip()), timeout=1)
         if r.status_code == 200:  # todo yo are there any other good 200s?
             return "Success: HTTP Response Code {}".format(r.status_code)
         return "Failure: HTTP Response Code {}".format(r.status_code)
