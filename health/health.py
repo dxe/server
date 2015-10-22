@@ -4,9 +4,10 @@ Uptime Robot polls this endpoint and searches for string matches to
 see which services are up and which are down. If any are down, it will
 send us an email. To distinguish between services, Uptime Robot does a
 string match on the entire response, and we've set it up to do a string
-match for the success strings like "Success: blah blah". Therefore if
-the text of the strings here change, the Uptime Robot string matching
-rules would need to be updated.
+match for the success strings like "Success: blah blah". They have to be
+mutually unique though, so the success match for one vital can't be
+mistaken for another. Therefore if the text of the strings here change,
+the Uptime Robot string matching rules would need to be updated.
 """
 import datetime
 import os
@@ -58,7 +59,7 @@ def chapter_map_page_loads():
     try:
         r = requests.get(CHAPTER_MAP_URL.format(this_server_ip()), timeout=1)
         if r.status_code == 200:  # todo yo are there any other good 200s?
-            return "Success: HTTP Response Code {}".format(r.status_code)
+            return "Success: map HTTP Response Code {}".format(r.status_code)
         return "Failure: HTTP Response Code {}".format(r.status_code)
     except requests.exceptions.ConnectionError:
         return "Failure: Connection Error"
@@ -99,7 +100,7 @@ def fb_event_count_present():
         )
         if r.status_code == 200:
             if "count" in r.json():
-                return "Success: HTTP Response Code {}, count {}".format(r.status_code, r.json()["count"])
+                return "Success: fb event HTTP Response Code {}, count {}".format(r.status_code, r.json()["count"])
             else:
                 return "Failure: count not in response"
         else:
@@ -107,7 +108,7 @@ def fb_event_count_present():
     except requests.exceptions.ConnectionError:
         return "Failure: Connection Error"
     except requests.exceptions.Timeout:
-        return "Failure: Request Timed Out"
+        return "Failure: Request Timed Out after 1 second"
     except:
         return "Failure: Unknown Error"
 
