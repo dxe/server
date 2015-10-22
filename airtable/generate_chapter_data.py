@@ -4,6 +4,7 @@ Usage:
 import json
 import re
 import sys
+import time
 
 import requests
 
@@ -22,6 +23,7 @@ def get_lat_long(s):
 
         tries = 1
         while r["status"] == "UNKNOWN_ERROR" and tries < GEOCODING_RETRIES:
+            time.sleep(60)  # Hold up one minute please. Google has failed many times in a row for unknown reasons...
             tries += 1
             r = requests.get("http://maps.googleapis.com/maps/api/geocode/json", params=payload).json()
         if r["status"] == "UNKNOWN_ERROR":
