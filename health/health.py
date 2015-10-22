@@ -25,6 +25,8 @@ S3_ACCESS_KEY = os.environ["AIRTABLE_BACKUP_AWS_ACCESS_KEY_ID"]
 S3_SECRET_KEY = os.environ["AIRTABLE_BACKUP_AWS_SECRET_ACCESS_KEY"]
 CHAPTER_DATA_PATH = "/var/www/maps/chapter_data.json"
 CHAPTER_MAP_URL = "http://{}/maps/chapter_map.html"
+FACEBOOK_DATA_URL = "http://{}/facebook/attending_event"
+
 
 app = Flask(__name__)
 
@@ -87,11 +89,39 @@ def airtable_backup_status():
     return {"name": "Airtable Backup", "vitals": [airtable_backup_recurring()]}
 
 
+def fb_event_count_present():
+    """Test to see if the facebook data endpoint returns an attendance count for events."""
+    try:
+        r = requests.get(
+            FACEBOOK_DATA_URL.format(this_server_ip()),
+            params={"event_id": 1697430973810357},
+            timeout=1,
+        )
+        if r.status_code == 200:
+            if "count" in r.json():
+                return "Success: HTTP Response Code {}, count {}".format(r.status_code, r.json()["count"])
+            else:
+                return "Failure: count not in response"
+        else:
+            return "Failure: HTTP Response Code {}".format(r.status_code)
+    except requests.exceptions.ConnectionError:
+        return "Failure: Connection Error"
+    except requests.exceptions.Timeout:
+        return "Failure: Request Timed Out"
+    except:
+        return "Failure: Unknown Error"
+
+
+def facebook_data_status():
+    return {"name": "Facebook Event Data", "vitals": [fb_event_count_present()]}
+
+
 @app.route('/health')
 def health():
     return jsonify({"products": [
         chapter_map_status(),
-        airtable_backup_status()
+        airtable_backup_status(),
+        facebook_data_status(),
     ]})
 
 
