@@ -27,6 +27,7 @@ S3_SECRET_KEY = os.environ["AIRTABLE_BACKUP_AWS_SECRET_ACCESS_KEY"]
 CHAPTER_DATA_PATH = "/var/www/maps/chapter_data.json"
 CHAPTER_MAP_URL = "http://{}/maps/chapter_map.html"
 FACEBOOK_DATA_URL = "http://{}/facebook/attending_event"
+LATEST_PLEDGERS_URL = "http://{}/pledge/latest_pledgers/{}"
 
 
 app = Flask(__name__)
@@ -117,12 +118,39 @@ def facebook_data_status():
     return {"name": "Facebook Event Data", "vitals": [fb_event_count_present()]}
 
 
+def latest_pledgers_returns_stuff():
+    """Test to see if the latest_pledgers endpoint 200s with some names"""
+    try:
+        r = requests.get(
+            LATEST_PLEDGERS_URL.format(this_server_ip(), 1),
+            timeout=4,
+        )
+        if r.status_code == 200:
+            if "pledgers" in r.json() and "Name" in r.json()["pledgers"][0]:
+                return "Success: HTTP Response Code {}, name found".format(r.status_code)
+            else:
+                return "Failure: pledger name not in response"
+        else:
+            return "Failure: HTTP Response Code {}".format(r.status_code)
+    except requests.exceptions.ConnectionError:
+        return "Failure: Connection Error"
+    except requests.exceptions.Timeout:
+        return "Failure: Request Timed Out after 4 seconds"
+    except:
+        return "Failure: Unknown Error"
+
+
+def latest_pledgers_status():
+    return {"name": "Latest Pledgers", "vitals": [latest_pledgers_returns_stuff()]}
+
+
 @app.route('/health')
 def health():
     return jsonify({"products": [
         chapter_map_status(),
         airtable_backup_status(),
         facebook_data_status(),
+        latest_pledgers_status(),
     ]})
 
 
