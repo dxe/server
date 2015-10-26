@@ -127,7 +127,7 @@ def latest_pledgers_returns_stuff():
         )
         if r.status_code == 200:
             if "pledgers" in r.json() and "Name" in r.json()["pledgers"][0]:
-                return "Success: HTTP Response Code {}, name found".format(r.status_code)
+                return "Success: pledge HTTP Response Code {}, name found".format(r.status_code)
             else:
                 return "Failure: pledger name not in response"
         else:
