@@ -1,6 +1,7 @@
 """API to expose the latest Liberation Pledge pledgers."""
 from oauth2client.client import SignedJwtAssertionCredentials
 import os
+from httplib import BadStatusLine
 
 import gspread
 from flask import Flask, jsonify
@@ -42,7 +43,12 @@ def health(num):
     elif num > NUM_PLEDGERS_LIMIT:
         return jsonify({"error": "number of entries requested too high"})
 
-    sheet = gc.open_by_key(SHEET_ID).sheet1
+    global gc
+    try:
+        sheet = gc.open_by_key(SHEET_ID).sheet1
+    except BadStatusLine:
+        gc = get_gspread_client()
+        sheet = gc.open_by_key(SHEET_ID).sheet1
 
     if sheet.row_count - 1 < num:  # There aren't `num` pledgers (-1 for header row)
         latest_values = sheet.get_all_values()[1:]
