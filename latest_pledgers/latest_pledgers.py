@@ -1,7 +1,6 @@
 """API to expose the latest Liberation Pledge pledgers."""
 from oauth2client.client import SignedJwtAssertionCredentials
 import os
-from httplib import BadStatusLine
 
 import gspread
 from flask import Flask, jsonify
@@ -46,7 +45,7 @@ def health(num):
     global gc
     try:
         sheet = gc.open_by_key(SHEET_ID).sheet1
-    except BadStatusLine:
+    except:
         gc = get_gspread_client()
         sheet = gc.open_by_key(SHEET_ID).sheet1
 
