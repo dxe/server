@@ -28,7 +28,7 @@ CHAPTER_DATA_PATH = "/var/www/maps/chapter_data.json"
 CHAPTER_MAP_URL = "http://{}/maps/chapter_map.html"
 FACEBOOK_DATA_URL = "http://{}/facebook/attending_event"
 LATEST_PLEDGERS_URL = "http://{}/pledge/latest_pledgers/{}"
-
+IMPORTANT_LATEST_PLEDGERS_FIELDS = ["Name", "Country", "City", "days_ago"]
 
 app = Flask(__name__)
 
@@ -126,10 +126,12 @@ def latest_pledgers_returns_stuff():
             timeout=4,
         )
         if r.status_code == 200:
-            if "pledgers" in r.json() and "Name" in r.json()["pledgers"][0]:
-                return "Success: pledge HTTP Response Code {}, name found".format(r.status_code)
+            if "pledgers" in r.json() and all(
+                [field in r.json()["pledgers"][0] for field in IMPORTANT_LATEST_PLEDGERS_FIELDS]
+            ):
+                return "Success: pledge HTTP Response Code {}, important fields found".format(r.status_code)
             else:
-                return "Failure: pledger name not in response"
+                return "Failure: one of [{}] fields not in pledgers response".format(", ".join(IMPORTANT_LATEST_PLEDGERS_FIELDS))
         else:
             return "Failure: HTTP Response Code {}".format(r.status_code)
     except requests.exceptions.ConnectionError:
