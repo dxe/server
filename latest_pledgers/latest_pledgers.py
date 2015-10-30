@@ -84,7 +84,7 @@ def latest_pledgers(num):
             days_ago_str = "{} days ago".format(days_ago)
 
         row_dict["days_ago"] = days_ago_str
-    return jsonify({"pledgers": shortened_row_dicts})
+    return jsonify({"pledgers": list(reversed(shortened_row_dicts))})  # ordered newest to oldest
 
 if __name__ == "__main__":
     app.run()
