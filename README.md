@@ -2,12 +2,12 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
 
 - [What's on the server?](#whats-on-the-server)
   - [Cron Jobs](#cron-jobs)
   - [The Chapter Map!](#the-chapter-map)
   - [Facebook Data API Proxy](#facebook-data-api-proxy)
+  - [Liberation Pledge Latest Pledgers Proxy](#liberation-pledge-latest-pledgers-proxy)
 - [Background](#background)
   - [Build](#build)
     - [Changing the build](#changing-the-build)
@@ -24,7 +24,6 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-
 ##What's on the server?
 ###Cron Jobs
 See [build/crontab](build/crontab).
@@ -39,8 +38,14 @@ from our activist databsae.
 ###Facebook Data API Proxy
 A proxy to make a subset of requests to the [Facebook Graph
 API](https://developers.facebook.com/docs/graph-api).
-Example.](http://dxetech.org/facebook/attending_event?event_id=122831071398421)
+[Example.](http://dxetech.org/facebook/attending_event?event_id=122831071398421)
 
+###Liberation Pledge Latest Pledgers Proxy
+An endpoint to get the latest pledgers to [The Liberation
+Pledge](http://www.liberationpledge.com/). They are stored in a google
+spreadsheet, so this uses [Google's Sheet
+API](https://developers.google.com/google-apps/spreadsheets/?hl=en) to grab them.
+[Example.](http://dxetech.org/pledge/latest_pledgers/2)
 
 ##Background
 ###Build

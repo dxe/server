@@ -18,6 +18,7 @@
         "mkdir -p /opt/dxe/airtable",
         "mkdir -p /opt/dxe/health",
         "mkdir -p /opt/dxe/facebook",
+        "mkdir -p /opt/dxe/latest_pledgers",
         "mkdir -p /var/www/maps"
       ]
     }, {
@@ -45,7 +46,9 @@
     }, {
       "type": "shell",
       "inline": [
-        "sudo mv /tmp/nginx.conf /etc/nginx/sites-enabled/default"
+        "sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default",
+        "sudo rm /etc/nginx/sites-enabled/default",
+        "sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default"
       ]
     },
 
@@ -151,6 +154,33 @@
       "type": "shell",
       "inline": [
         "sudo chmod +x /opt/dxe/facebook/run_facebook.sh"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "latest_pledgers/latest_pledgers.py",
+      "destination": "/opt/dxe/latest_pledgers/latest_pledgers.py"
+    }, {
+      "type": "file",
+      "source": "latest_pledgers/__init__.py",
+      "destination": "/opt/dxe/latest_pledgers/__init__.py"
+    }, {
+      "type": "file",
+      "source": "latest_pledgers/run_latest_pledgers.sh",
+      "destination": "/opt/dxe/latest_pledgers/run_latest_pledgers.sh"
+    }, {
+      "type": "file",
+      "source": "config/latest_pledgers.sh",
+      "destination": "/opt/dxe/latest_pledgers/conf.sh"
+    }, {
+      "type": "file",
+      "source": "build/conf/upstart-latest_pledgers.conf",
+      "destination": "/etc/init/latest_pledgers.conf"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/latest_pledgers/run_latest_pledgers.sh"
       ]
     }
   ]
