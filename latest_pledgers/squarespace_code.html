@@ -1,0 +1,110 @@
+<!-- ADD THE FACEBOOK SHARE LOGIC TO THE FORM (AND MAKE COSMETIC CHANGES TO THE PAGE): -->
+<script>
+//set up the FB JS sdk
+(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+          js.src
+            = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=167860250226679";
+            fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+//define function to open the fb share dialog
+function facebookShare(){
+    /*this works under a set of assumptions about the page:
+          1. There is only one form on the page
+              2. the fb check box has the value "Share to Facebook" and it is
+                 the only checkbox under the form with that value */
+    fbcheckbox = getFbCheckbox();
+      if(fbcheckbox.checked){
+            FB.ui({
+                    method: 'share',
+                    href: 'http://liberationpledge.com',
+                        }, function(response){});
+              }
+}
+
+// define function to get the fb share dialog
+function getFbCheckbox(){
+    var fbcheckbox;
+      var inputs
+        = document.getElementsByTagName('form')[0].getElementsByTagName('input');
+        for(var i = 0; i < inputs.length; i++){
+              if(inputs[i].type == "checkbox" && inputs[i].value == "Share to
+                  Facebook"){
+                      fbcheckbox = inputs[i];
+                  }
+          }
+          return fbcheckbox;
+}
+
+// attach the facebook share dialog popup function as the first action on form
+submit
+document.getElementsByTagName('form')[0].setAttribute("onsubmit",
+    "facebookShare();
+    " + document.getElementsByTagName('form')[0].getAttribute("onsubmit"));
+
+// set the facebook share dialog to check by default
+getFbCheckbox().checked = true;
+
+// set the height of the recent pledgers box to be the same as the height of the
+form (rendered to different heights on different browsers
+    document.getElementById("recent-pledge-takers").style.height=document.getElementsByClassName("sqs-block-form")[0].clientHeight
+    + "px";
+</script>
+
+
+
+
+
+
+<!-- INSERT RECENT PLEDGERS INTO THE PAGE: -->
+
+<script>
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+};
+function pledgeJsonToHTML(json){
+  var pledgers = json["pledgers"];
+  var text = "";
+  for(var i = 0; i < pledgers.length; i++){
+    // todo default values
+    text = text.concat("<div class=\"pledge\"><div><strong>");
+    text = text.concat(escapeHtml(pledgers[i]["Name"]));
+    text = text.concat("</strong> ");
+    if(pledgers[i]["City"] || pledgers[i]["Country"]){
+      text = text.concat("- ");
+    }
+    text = text.concat(escapeHtml(pledgers[i]["City"]));
+    if (pledgers[i]["City"] && pledgers[i]["Country"]){
+      text = text.concat(", ");
+    }
+    text = text.concat(escapeHtml(pledgers[i]["Country"]));
+    text = text.concat("</div><div><span>Pledged ");
+    text = text.concat(pledgers[i]["days_ago"]);
+    text = text.concat("</span></div></div>");
+  }
+  return text;
+}
+function insertPledgers() {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+      if(xmlhttp.status == 200) {
+        document.getElementById("pledges").innerHTML = pledgeJsonToHTML(JSON.parse (xmlhttp.responseText));
+      }
+      else {
+        alert(xmlhttp.status);
+        alert(xmlhttp.responseText);
+      }
+    }
+  }
+  xmlhttp.open("GET", "http://dxetech.org/pledge/latest_pledgers/11", true);
+  xmlhttp.send();
+}
+insertPledgers();
+</script>
+
