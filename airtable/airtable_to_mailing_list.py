@@ -109,25 +109,31 @@ def sync_airtable_to_mailing_list():
         valid_chapters_to_add = []
         for c in m.chapters_to_add:
             if c not in chapter_to_mailing_list:
+                print "Not adding member {} to chapter {} because it does not have a mailing list.".format(m.email, c)
                 continue
             ml = chapter_to_mailing_list[c]
+            print "Adding member {} to chapter mailing list {} for chapter {}.".format(m.email, ml, c)
             try:
                 directory.members().insert(groupKey=ml, body={"email": m.email.strip()}).execute()
                 valid_chapters_to_add.append(c)
+                print "Successfully added member {} to mailing list {}".format(m.email, ml)
             except HttpError as e:
                 print e
+                print "Error adding member {} to mailing list {}.".format(m.email, ml)
                 content = json.loads(e.content)
                 if "Member already exists" in content["error"]["message"]:
                     # Add member if the error is that they already exist.
                     valid_chapters_to_add.append(c)
-                    print "Adding member to {} in Airtable anyway.".format(c)
+                    print "Adding member {} to chapter {} in Airtable anyway.".format(m.email, c)
         if not valid_chapters_to_add:
+            print "Not adding member {} to any chapter mailing lists, valid_chapters_to_add is empty".format(m.email)
             continue # Don't update the member if they weren't added to any chapter mailing lists.
         # Update member in airtable.
         valid_chapters_to_add += m.chapters_added
+        print "Updating member {}'s airtable column {} to {}".format(m.email, ADDED_TO_MAILING_LIST_COL, valid_chapters_to_add)
         r = airtable.update_record("All Members", m.airtable_id, {ADDED_TO_MAILING_LIST_COL: valid_chapters_to_add})
         if r.status_code != 200:
-            raise Exception("Expected '200' from airtable.update_record: {}, {}, {}".format(m.airtable_id, valid_chapters_to_add, r.text))
+            raise Exception("Error updating Airtable column {}, expected '200' from airtable.update_record: {}, {}, {}, {}".format(ADDED_TO_MAILING_LIST_COL, m.airtable_id, m.email, valid_chapters_to_add, r.text))
     print "done!"
 
 
