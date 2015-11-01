@@ -30,6 +30,7 @@
 See [build/crontab](build/crontab).
 
 * Airtable backup to S3.
+* Airtable sync to Google Groups.
 * Chapter map data update.
 
 ###The Chapter Map!
@@ -51,6 +52,9 @@ API](https://developers.google.com/google-apps/spreadsheets/?hl=en) to grab them
 ###Attendance App
 A simple [web page](http://dxetech.org/attend) for organizers to create events and mark who attended it in the airtable database.
 
+###Sync Airtable to Google Groups
+
+Sync from Airtable to Google Groups.
 
 ##Background
 ###Build
