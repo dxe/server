@@ -7,7 +7,7 @@ import gspread
 from flask import Flask, jsonify
 
 SHEET_ID = os.environ["LIBERATION_PLEDGE_SHEET_ID"]
-NUM_PLEDGERS_LIMIT = 50
+NUM_PLEDGERS_LIMIT = 11
 ENTRY_LENGTH_LIMIT = 20
 
 HEADERS = [
