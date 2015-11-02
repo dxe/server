@@ -98,10 +98,6 @@ function insertPledgers() {
       if(xmlhttp.status == 200) {
         document.getElementById("pledges").innerHTML = pledgeJsonToHTML(JSON.parse (xmlhttp.responseText));
       }
-      else {
-        alert(xmlhttp.status);
-        alert(xmlhttp.responseText);
-      }
     }
   }
   xmlhttp.open("GET", "http://dxetech.org/pledge/latest_pledgers/11", true);
