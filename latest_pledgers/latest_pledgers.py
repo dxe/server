@@ -13,16 +13,12 @@ ENTRY_LENGTH_LIMIT = 20
 HEADERS = [
     "Submitted On",
     "Name",
-    "Email Address",
-    "I pledge to",  # unused
-    "Comment",
     "City",
     "Country",
-    "Share to facebook",  # unused
-    "Checkbox-1",  # new "I pledge to ..." checkbox
-    "Checkbox-2",  # new "Share to Facebook" checkbox
+    "Email",
+    "Address",
     "Why are you taking this pledge",
-
+    "Checkbox-1", # "Share to Facebook" checkbox
 ]
 RETURN_HEADERS = [
     "Submitted On",
