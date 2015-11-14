@@ -8,6 +8,7 @@
   - [The Chapter Map!](#the-chapter-map)
   - [Facebook Data API Proxy](#facebook-data-api-proxy)
   - [Liberation Pledge Latest Pledgers Proxy](#liberation-pledge-latest-pledgers-proxy)
+  - [Attendance App](#attendance-app)
 - [Background](#background)
   - [Build](#build)
     - [Changing the build](#changing-the-build)
@@ -33,7 +34,7 @@ See [build/crontab](build/crontab).
 
 ###The Chapter Map!
 [A map](http://dxetech.org/maps/chapter_map.html) of all the DxE chapters, pulled
-from our activist databsae.
+from our activist database.
 
 ###Facebook Data API Proxy
 A proxy to make a subset of requests to the [Facebook Graph
@@ -46,6 +47,10 @@ Pledge](http://www.liberationpledge.com/). They are stored in a google
 spreadsheet, so this uses [Google's Sheet
 API](https://developers.google.com/google-apps/spreadsheets/?hl=en) to grab them.
 [Example.](http://dxetech.org/pledge/latest_pledgers/2)
+
+###Attendance App
+A simple [web page](http://dxetech.org/attend) for organizers to create events and mark who attended it in the airtable database.
+
 
 ##Background
 ###Build
