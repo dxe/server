@@ -1,9 +1,9 @@
-MAILTO=tech@directactioneverywhere.com
+MAILTO=tech-error-reporting@directactioneverywhere.com
 
 # min   hour    day_of_month    month   day_of_week command
 
 #backup airtable twice a day
 0 0,12 * * * /opt/dxe/airtable/run_backup_airtable.sh
 
-#update the chapter map data twice a day
-0 0,12 * * * /opt/dxe/airtable/run_generate_chapter_data.sh
+#update the chapter map data hourly
+0 * * * * /opt/dxe/airtable/run_generate_chapter_data.sh

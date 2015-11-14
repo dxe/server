@@ -1,3 +1,7 @@
 # requirements for code running on the server
-requests[security]==2.7.0
 boto==2.38.0
+Flask==0.10.1
+gspread==0.2.5
+gunicorn==19.3.0
+oauth2client==1.4.12
+requests[security]==2.7.0

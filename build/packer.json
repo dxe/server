@@ -13,11 +13,14 @@
       "inline": [
         "sleep 30",
         "sudo apt-get update",
-        "sudo apt-get install -y python-dev python-pip nginx",
+        "sudo apt-get install -y python-dev python-pip nginx upstart",
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
         "sudo apt-get install -y php5-fpm",
         "sudo apt-get install -y php5-curl",
         "mkdir -p /opt/dxe/airtable",
+        "mkdir -p /opt/dxe/health",
+        "mkdir -p /opt/dxe/facebook",
+        "mkdir -p /opt/dxe/latest_pledgers",
         "mkdir -p /var/www/maps",
         "mkdir -p /usr/share/php/attend",
         "mkdir -p /var/www/attend/images"
@@ -47,11 +50,17 @@
     }, {
       "type": "shell",
       "inline": [
-        "sudo mv /tmp/nginx.conf /etc/nginx/sites-enabled/default"
+        "sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default",
+        "sudo rm /etc/nginx/sites-enabled/default",
+        "sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default"
       ]
     },
 
     {
+      "type": "file",
+      "source": "airtable/airtable.py",
+      "destination": "/opt/dxe/airtable/airtable.py"
+    }, {
       "type": "file",
       "source": "airtable/backup_airtable.py",
       "destination": "/opt/dxe/airtable/backup_airtable.py"
@@ -91,10 +100,91 @@
       "source": "maps/add_map.js",
       "destination": "/var/www/maps/add_map.js"
     }, {
+      "type": "file",
+      "source": "maps/dxe_marker.png",
+      "destination": "/var/www/maps/dxe_marker.png"
+    }, {
       "type": "shell",
       "inline": [
         "sudo chmod +x /opt/dxe/airtable/run_generate_chapter_data.sh",
         "/opt/dxe/airtable/run_generate_chapter_data.sh"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "health/health.py",
+      "destination": "/opt/dxe/health/health.py"
+    }, {
+      "type": "file",
+      "source": "health/__init__.py",
+      "destination": "/opt/dxe/health/__init__.py"
+    }, {
+      "type": "file",
+      "source": "health/run_health.sh",
+      "destination": "/opt/dxe/health/run_health.sh"
+    }, {
+      "type": "file",
+      "source": "build/conf/upstart-health.conf",
+      "destination": "/etc/init/health.conf"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/health/run_health.sh"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "facebook/facebook.py",
+      "destination": "/opt/dxe/facebook/facebook.py"
+    }, {
+      "type": "file",
+      "source": "facebook/__init__.py",
+      "destination": "/opt/dxe/facebook/__init__.py"
+    }, {
+      "type": "file",
+      "source": "facebook/run_facebook.sh",
+      "destination": "/opt/dxe/facebook/run_facebook.sh"
+    }, {
+      "type": "file",
+      "source": "config/facebook.sh",
+      "destination": "/opt/dxe/facebook/conf.sh"
+    }, {
+      "type": "file",
+      "source": "build/conf/upstart-facebook.conf",
+      "destination": "/etc/init/facebook.conf"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/facebook/run_facebook.sh"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "latest_pledgers/latest_pledgers.py",
+      "destination": "/opt/dxe/latest_pledgers/latest_pledgers.py"
+    }, {
+      "type": "file",
+      "source": "latest_pledgers/__init__.py",
+      "destination": "/opt/dxe/latest_pledgers/__init__.py"
+    }, {
+      "type": "file",
+      "source": "latest_pledgers/run_latest_pledgers.sh",
+      "destination": "/opt/dxe/latest_pledgers/run_latest_pledgers.sh"
+    }, {
+      "type": "file",
+      "source": "config/latest_pledgers.sh",
+      "destination": "/opt/dxe/latest_pledgers/conf.sh"
+    }, {
+      "type": "file",
+      "source": "build/conf/upstart-latest_pledgers.conf",
+      "destination": "/etc/init/latest_pledgers.conf"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/latest_pledgers/run_latest_pledgers.sh"
       ]
     },
 
