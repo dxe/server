@@ -16,24 +16,30 @@ def get_members_data():
     for row in raw_data:
         fields = row["fields"]
         if "first_name" in fields or "last_name" in fields:
-            retrow = { "fields":{} }
-            retrow["fields"]["first_name"] = fields.get("first_name")
-            retrow["fields"]["last_name"]  = fields.get("last_name")
-            retrow["fields"]["chapter_id"]  = fields.get("chapter_id")
-            retrow["id"] = row["id"]
+            retrow = { 
+              "fields": {
+                "first_name" :fields.get("first_name"),
+                "last_name"  :fields.get("last_name"),
+                "chapter_id" :fields.get("chapter_id"),
+              },
+              "id": row["id"],
+            }
             ret["All Members:Main View"].append(retrow)
         else:
             # well we can't really do anything without a name...
             pass
-    row_data = get_all_records("Chapters", "Main View")
+    raw_data = get_all_records("Chapters", "Main View")
     ret["Chapters:Main View"] = [] 
-    for row in row_data:
+    for row in raw_data:
         fields = row["fields"]
         if "Name" in fields:
-            retrow = { "fields":{} }
-            retrow["fields"]["Name"]        = fields.get("Name")
-            retrow["fields"]["All Members"] = fields.get("All Members")
-            retrow["id"] = row["id"]
+            retrow = {
+              "fields": {
+                "Name"        :fields.get("Name"),
+                "All Members" :fields.get("All Members"),
+              },
+              "id": row["id"],
+            }
             ret["Chapters:Main View"].append(retrow) 
     return ret
 
