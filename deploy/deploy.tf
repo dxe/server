@@ -2,7 +2,8 @@ variable "config" {
     default ={
         "server_name" = "dxetech-server-production"
         "mperrone_ssh_print" = "b6:c7:cf:30:3c:fb:ff:a8:73:d1:75:c8:3b:e4:fe:2d"
-        "image_id" = "14245709"
+        "lmz_ssh_print" = "18:99:7d:3a:e0:e7:a6:99:ce:0e:eb:ed:a8:63:78:41"
+        "image_id" = "14389448"
     }
 }
 
@@ -14,7 +15,7 @@ resource "digitalocean_droplet" "server" {
     name = "${var.config.server_name}"
     region = "sfo1"
     size = "512mb"
-    ssh_keys = ["${var.config.mperrone_ssh_print}"]
+    ssh_keys = ["${var.config.mperrone_ssh_print}","${var.config.lmz_ssh_print}"]
 }
 
 output "ip" {
