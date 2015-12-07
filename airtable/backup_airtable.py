@@ -1,5 +1,6 @@
 """Back up the Airtable base."""
 import datetime
+import json
 import os
 import tempfile
 import zipfile
@@ -25,7 +26,7 @@ def backup_all_tables():
     ) as zf:
         for table in airtable.TABLES:
             records = airtable.get_all_records(table, "Main View")
-            zf.writestr("{}.json".format(table), str(records))
+            zf.writestr("{}.json".format(table), json.dumps(records))
 
     conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY)
     b = conn.get_bucket(S3_BUCKET)
