@@ -1,4 +1,7 @@
 #Facebook Data API
+**NOTE:** This is currently not being used anywhere (12/13/15).
+
+
 This endpoint basically just hits the [Facebook Graph
 API](https://developers.facebook.com/docs/graph-api) and returns
 the results.
