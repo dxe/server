@@ -85,8 +85,7 @@ function pledgeJsonToHTML(json){
       text = text.concat(", ");
     }
     text = text.concat(escapeHtml(pledgers[i]["Country"]));
-    text = text.concat("</div><div><span>Pledged ");
-    text = text.concat(pledgers[i]["days_ago"]);
+    text = text.concat("</div><div><span><br>");
     text = text.concat("</span></div></div>");
   }
   return text;
