@@ -9,6 +9,7 @@ from flask import Flask, jsonify
 SHEET_ID = os.environ["LIBERATION_PLEDGE_SHEET_ID"]
 NUM_PLEDGERS_LIMIT = 11
 ENTRY_LENGTH_LIMIT = 20
+LOG_LOCATION = "/opt/dxe/logs/latest_pledgers"
 
 HEADERS = [
     "Submitted On",
@@ -18,7 +19,7 @@ HEADERS = [
     "Email",
     "Address",
     "Why are you taking this pledge",
-    "Checkbox-1", # "Share to Facebook" checkbox
+    "Checkbox-1",  # "Share to Facebook" checkbox
 ]
 RETURN_HEADERS = [
     "Submitted On",
@@ -83,4 +84,10 @@ def latest_pledgers(num):
     return jsonify({"pledgers": list(reversed(shortened_row_dicts))})  # ordered newest to oldest
 
 if __name__ == "__main__":
+    if not app.debug:
+        import logging
+        from logging.handlers import RotatingFileHandler
+        file_handler = RotatingFileHandler(LOG_LOCATION, maxBytes=100000, backupCount=100)
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
     app.run()

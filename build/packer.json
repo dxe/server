@@ -21,6 +21,7 @@
         "mkdir -p /opt/dxe/health",
         "mkdir -p /opt/dxe/facebook",
         "mkdir -p /opt/dxe/latest_pledgers",
+        "mkdir -p /opt/dxe/logs",
         "mkdir -p /var/www/maps",
         "mkdir -p /usr/share/php/attend",
         "mkdir -p /var/www/attend/images"
