@@ -6,17 +6,17 @@ import json
 import re
 import sys
 
-from backup_airtable import get_all_records
+from airtable import get_all_records
 
 
 def get_members_data():
     raw_data = get_all_records("All Members", "Main View")
     ret = {}
-    ret["All Members:Main View"] = [] 
+    ret["All Members:Main View"] = []
     for row in raw_data:
         fields = row["fields"]
         if "first_name" in fields or "last_name" in fields:
-            retrow = { 
+            retrow = {
               "fields": {
                 "first_name" :fields.get("first_name"),
                 "last_name"  :fields.get("last_name"),
@@ -29,7 +29,7 @@ def get_members_data():
             # well we can't really do anything without a name...
             pass
     raw_data = get_all_records("Chapters", "Main View")
-    ret["Chapters:Main View"] = [] 
+    ret["Chapters:Main View"] = []
     for row in raw_data:
         fields = row["fields"]
         if "Name" in fields:
@@ -40,7 +40,7 @@ def get_members_data():
               },
               "id": row["id"],
             }
-            ret["Chapters:Main View"].append(retrow) 
+            ret["Chapters:Main View"].append(retrow)
     return ret
 
 
