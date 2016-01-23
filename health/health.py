@@ -30,6 +30,8 @@ FACEBOOK_DATA_URL = "http://{}/facebook/attending_event"
 LATEST_PLEDGERS_URL = "http://{}/pledge/latest_pledgers/{}"
 IMPORTANT_LATEST_PLEDGERS_FIELDS = ["Name", "Country", "City", "days_ago"]
 
+LOG_LOCATION = "/opt/dxe/logs/health"
+
 app = Flask(__name__)
 
 
@@ -157,4 +159,10 @@ def health():
 
 
 if __name__ == "__main__":
+    if not app.debug:
+        import logging
+        from logging.handlers import RotatingFileHandler
+        file_handler = RotatingFileHandler(LOG_LOCATION, maxBytes=100000, backupCount=100)
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
     app.run()

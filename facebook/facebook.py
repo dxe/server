@@ -4,6 +4,8 @@ import os
 from flask import Flask, jsonify, request
 import requests
 
+LOG_LOCATION = "/opt/dxe/logs/facebook"
+
 app = Flask(__name__)
 
 
@@ -21,4 +23,10 @@ def attending_event():
 
 
 if __name__ == "__main__":
+    if not app.debug:
+        import logging
+        from logging.handlers import RotatingFileHandler
+        file_handler = RotatingFileHandler(LOG_LOCATION, maxBytes=100000, backupCount=100)
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
     app.run()
