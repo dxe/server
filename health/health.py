@@ -125,7 +125,7 @@ def latest_pledgers_returns_stuff():
     try:
         r = requests.get(
             LATEST_PLEDGERS_URL.format(this_server_ip(), 1),
-            timeout=4,
+            timeout=10,
         )
         if r.status_code == 200:
             if "pledgers" in r.json() and all(
