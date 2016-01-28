@@ -4,12 +4,14 @@ from oauth2client.client import SignedJwtAssertionCredentials
 import os
 
 import gspread
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from werkzeug.contrib.cache import SimpleCache
 
 SHEET_ID = os.environ["LIBERATION_PLEDGE_SHEET_ID"]
 NUM_PLEDGERS_LIMIT = 11
 ENTRY_LENGTH_LIMIT = 20
 LOG_LOCATION = "/opt/dxe/logs/latest_pledgers"
+CACHE_TIMEOUT = 10800  # 3 hours
 
 HEADERS = [
     "Submitted On",
@@ -29,6 +31,22 @@ RETURN_HEADERS = [
 ]
 
 app = Flask(__name__)
+cache = SimpleCache()
+
+
+class cached(object):
+
+    def __init__(self, timeout=None):
+        self.timeout = timeout or CACHE_TIMEOUT
+
+    def __call__(self, f):
+        def decorator(*args, **kwargs):
+            response = cache.get(request.path)
+            if response is None:
+                response = f(*args, **kwargs)
+                cache.set(request.path, response, self.timeout)
+            return response
+        return decorator
 
 
 def get_gspread_client():
@@ -49,6 +67,7 @@ def shorten_field(field):
 
 
 @app.route('/pledge/latest_pledgers/<int:num>')
+@cached()
 def latest_pledgers(num):
     """Returns the last `num` pledgers."""
     if num < 1:
