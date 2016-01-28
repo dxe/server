@@ -7,3 +7,6 @@ MAILTO=tech-error-reporting@directactioneverywhere.com
 
 #update the chapter map data hourly
 0 * * * * /opt/dxe/airtable/run_generate_chapter_data.sh
+
+#sync airtable to google groups twice a day
+0 1,13 * * * make -C /opt/dxe/airtable/ sync

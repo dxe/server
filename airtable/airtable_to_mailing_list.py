@@ -3,10 +3,14 @@
 import httplib2
 import json
 import airtable
+import logging
+import argparse
 from apiclient.errors import HttpError
 from apiclient.discovery import build
 from oauth2client.client import SignedJwtAssertionCredentials
 from collections import namedtuple
+
+logger = logging.getLogger(__name__)
 
 def get_directory():
     with open("../config/client_secret.json") as f:
@@ -109,27 +113,41 @@ def sync_airtable_to_mailing_list():
         valid_chapters_to_add = []
         for c in m.chapters_to_add:
             if c not in chapter_to_mailing_list:
+                logger.info("Not adding member %s to chapter %s because it does not have a mailing list.", m.email, c)
                 continue
             ml = chapter_to_mailing_list[c]
+            logger.info("Adding member %s to chapter mailing list %s for chapter %s.", m.email, ml, c)
             try:
                 directory.members().insert(groupKey=ml, body={"email": m.email.strip()}).execute()
                 valid_chapters_to_add.append(c)
+                logger.info("Successfully added member %s to mailing list %s", m.email, ml)
             except HttpError as e:
-                print e
+                logger.error(e)
+                logger.error("Error adding member %s to mailing list %s.", m.email, ml)
                 content = json.loads(e.content)
                 if "Member already exists" in content["error"]["message"]:
                     # Add member if the error is that they already exist.
                     valid_chapters_to_add.append(c)
-                    print "Adding member to {} in Airtable anyway.".format(c)
+                    logger.warning("Adding member %s to chapter %s in Airtable anyway.", m.email, c)
         if not valid_chapters_to_add:
+            logger.info("Not adding member %s to any chapter mailing lists, valid_chapters_to_add is empty", m.email)
             continue # Don't update the member if they weren't added to any chapter mailing lists.
         # Update member in airtable.
         valid_chapters_to_add += m.chapters_added
+        logger.info("Updating member %s's airtable column %s to %s", m.email, ADDED_TO_MAILING_LIST_COL, valid_chapters_to_add)
         r = airtable.update_record("All Members", m.airtable_id, {ADDED_TO_MAILING_LIST_COL: valid_chapters_to_add})
         if r.status_code != 200:
-            raise Exception("Expected '200' from airtable.update_record: {}, {}, {}".format(m.airtable_id, valid_chapters_to_add, r.text))
-    print "done!"
+            raise Exception("Error updating Airtable column %s, expected '200' from airtable.update_record: %s, %s, %s, %s".format(ADDED_TO_MAILING_LIST_COL, m.airtable_id, m.email, valid_chapters_to_add, r.text))
+    logger.info("done!")
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Airtable to Google Groups Sync.")
+    parser.add_argument("--log", choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"],
+                        default="WARNING", help="logging level (default: WARNING).")
+    args = parser.parse_args()
+    logging.basicConfig()
+    loglevel = getattr(logging, args.log)
+    logger.setLevel(loglevel)
+    handler = logging.StreamHandler()
     sync_airtable_to_mailing_list()
