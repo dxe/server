@@ -3,7 +3,7 @@ variable "config" {
         "server_name" = "dxetech-server-production"
         "mperrone_ssh_print" = "b6:c7:cf:30:3c:fb:ff:a8:73:d1:75:c8:3b:e4:fe:2d"
         "lmz_ssh_print" = "18:99:7d:3a:e0:e7:a6:99:ce:0e:eb:ed:a8:63:78:41"
-        "image_id" = "15442389"
+        "image_id" = "15518334"
     }
 }
 
