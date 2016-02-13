@@ -1,16 +1,17 @@
 CREATE TABLE community (
-  id INT PRIMARY KEY
+  id BIGINT PRIMARY KEY
 );
 
 CREATE TABLE event (
-  id INT PRIMARY KEY,
+  id BIGINT PRIMARY KEY,
   name TEXT,
   start_time TIMESTAMP WITH TIME ZONE,
-  community_id INT REFERENCES community(id)
+  community_id BIGINT REFERENCES community(id)
 );
 
-CREATE TABLE attendee (
-  id INT PRIMARY KEY,
-  event_id INT REFERENCES event(id),
-  rsvp_status TEXT
+CREATE TABLE attendance (
+  id TEXT,
+  event_id BIGINT REFERENCES event(id),
+  rsvp_status TEXT,
+  PRIMARY KEY(id, event_id)
 );

@@ -13,16 +13,18 @@
       "inline": [
         "sleep 30",
         "sudo apt-get update",
-        "sudo apt-get install -y python-dev python-pip nginx upstart",
+        "sudo apt-get install -y python-dev python-pip nginx upstart libpq-dev",
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
         "sudo apt-get install -y php5-fpm",
         "sudo apt-get install -y php5-curl",
         "mkdir -p /opt/dxe/airtable",
-        "mkdir -p /opt/dxe/health",
+        "mkdir -p /opt/dxe/dashboard",
         "mkdir -p /opt/dxe/facebook",
+        "mkdir -p /opt/dxe/health",
         "mkdir -p /opt/dxe/latest_pledgers",
         "mkdir -p /opt/dxe/logs",
         "mkdir -p /var/www/maps",
+        "mkdir -p /var/www/dashboard",
         "mkdir -p /usr/share/php/attend",
         "mkdir -p /var/www/attend/images"
       ]
@@ -63,6 +65,10 @@
       "destination": "/opt/dxe/airtable/airtable.py"
     }, {
       "type": "file",
+      "source": "airtable/__init__.py",
+      "destination": "/opt/dxe/airtable/__init__.py"
+    }, {
+      "type": "file",
       "source": "airtable/backup_airtable.py",
       "destination": "/opt/dxe/airtable/backup_airtable.py"
     }, {
@@ -88,10 +94,6 @@
       "type": "file",
       "source": "airtable/run_generate_chapter_data.sh",
       "destination": "/opt/dxe/airtable/run_generate_chapter_data.sh"
-    }, {
-      "type": "file",
-      "source": "airtable/generate_chapter_data.py",
-      "destination": "/opt/dxe/airtable/generate_chapter_data.py"
     }, {
       "type": "file",
       "source": "maps/chapter_map.html",
@@ -251,6 +253,26 @@
         "gunzip 1.1.5.tar.gz",
         "tar xvf 1.1.5.tar",
         "mv google-api-php-client-1.1.5 /usr/share/php/google-api-php-client"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "config/db.sh",
+      "destination": "/opt/dxe/dashboard/conf.sh"
+    }, {
+      "type": "file",
+      "source": "dashboard/generate_dashboard_data.py",
+      "destination": "/opt/dxe/dashboard/generate_dashboard_data.py"
+    }, {
+      "type": "file",
+      "source": "dashboard/run_generate_dashboard_data.py",
+      "destination": "/opt/dxe/dashboard/run_generate_dashboard_data.sh"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chmod +x /opt/dxe/dashboard/run_generate_dashboard_data.sh",
+        "/opt/dxe/dashboard/run_generate_dashboard_data.sh views_only"
       ]
     }
   ]

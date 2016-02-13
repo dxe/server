@@ -1,5 +1,4 @@
 MAILTO=tech-error-reporting@directactioneverywhere.com
-
 # min   hour    day_of_month    month   day_of_week command
 
 #backup airtable twice a day
@@ -7,3 +6,6 @@ MAILTO=tech-error-reporting@directactioneverywhere.com
 
 #update the chapter map data hourly
 0 * * * * /opt/dxe/airtable/run_generate_chapter_data.sh
+
+#pull data from facebook into the db daily
+0 1 * * * /opt/dxe/dashboard/run_generate_dashboard_data.py
