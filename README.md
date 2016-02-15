@@ -31,6 +31,7 @@ See [build/crontab](build/crontab).
 
 * Airtable backup to S3.
 * Chapter map data update.
+* Facebook to dashboard data dump.
 
 ###The Chapter Map!
 [A map](http://dxetech.org/maps/chapter_map.html) of all the DxE chapters, pulled
@@ -50,6 +51,9 @@ API](https://developers.google.com/google-apps/spreadsheets/?hl=en) to grab them
 
 ###Attendance App
 A simple [web page](http://dxetech.org/attend) for organizers to create events and mark who attended it in the airtable database.
+
+###Dashboard Data
+Metrics pulled from fb, saved in our db, exposed through the server, and displayed <somewhere>.
 
 
 ##Background
