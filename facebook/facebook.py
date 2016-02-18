@@ -14,7 +14,7 @@ def attending_event():
     """Get the number of people who have replied 'attending' or 'maybe' to an event by event_id."""
     event_id = request.args["event_id"]
     r = requests.get(
-        "https://graph.facebook.com/{}".format(event_id),
+        "https://graph.facebook.com/v2.5/{}".format(event_id),
         params={"fields": "id,attending_count,maybe_count"},
         headers={"Authorization": "Bearer {}".format(os.environ["FACEBOOK_APP_ACCESS_TOKEN"])}
     )

@@ -18,10 +18,11 @@ import requests
 
 
 CHAPTER_MAP_TIMING_WINDOW = datetime.timedelta(hours=4)  # Should update every hour
-AIRTABLE_BACKUP_TIMING_WINDOW = datetime.timedelta(days=2)  # Should update every 12 hours
+AIRTABLE_BACKUP_TIMING_WINDOW = datetime.timedelta(days=1)  # Should update every 12 hours
+DASHBOARD_DATA_TIMING_WINDOW = datetime.timedelta(days=2)  # Should update every day
 
 S3_BUCKET = "dxe-backup"
-S3_BACKUP_DIR = "airtable"
+S3_AIRTABLE_BACKUP_DIR = "airtable"
 S3_ACCESS_KEY = os.environ["AIRTABLE_BACKUP_AWS_ACCESS_KEY_ID"]
 S3_SECRET_KEY = os.environ["AIRTABLE_BACKUP_AWS_SECRET_ACCESS_KEY"]
 CHAPTER_DATA_PATH = "/var/www/maps/chapter_data.json"
@@ -29,6 +30,7 @@ CHAPTER_MAP_URL = "http://{}/maps/chapter_map.html"
 FACEBOOK_DATA_URL = "http://{}/facebook/attending_event"
 LATEST_PLEDGERS_URL = "http://{}/pledge/latest_pledgers/{}"
 IMPORTANT_LATEST_PLEDGERS_FIELDS = ["Name", "Country", "City", "days_ago"]
+DASHBOARD_DATA_PATH = "/var/www/dashboard/monthly_attendees.csv"
 
 LOG_LOCATION = "/opt/dxe/logs/health"
 
@@ -53,8 +55,8 @@ def chapter_map_data_updating():
     except os.error:
         return "Failure: unable to read chapter_data.json"
     if time_since_last_update < CHAPTER_MAP_TIMING_WINDOW:
-        return "Success: last updated {} ago".format(time_since_last_update)
-    return "Failure: last updated {} ago".format(time_since_last_update)
+        return "Success: chapter map last updated {} ago".format(time_since_last_update)
+    return "Failure: chapter map last updated {} ago".format(time_since_last_update)
 
 
 def chapter_map_page_loads():
@@ -82,7 +84,7 @@ def airtable_backup_recurring():
     """Test to see if the airtable backup is occurring."""
     conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY)
     b = conn.get_bucket(S3_BUCKET)
-    last_backup = max([airtable_backup_key_to_dt(k.name) for k in b.list(S3_BACKUP_DIR + "/", "/") if k.name[-1] != "/"])
+    last_backup = max([airtable_backup_key_to_dt(k.name) for k in b.list(S3_AIRTABLE_BACKUP_DIR + "/", "/") if k.name[-1] != "/"])
     time_since_last_backup = datetime.datetime.now() - last_backup
     if time_since_last_backup < AIRTABLE_BACKUP_TIMING_WINDOW:
         return "Success: last backed up {} ago".format(time_since_last_backup)
@@ -148,6 +150,21 @@ def latest_pledgers_status():
     return {"name": "Latest Pledgers", "vitals": [latest_pledgers_returns_stuff()]}
 
 
+def dashboard_data_updating():
+    """Test to see if the dashboard data is updating."""
+    try:
+        time_since_last_update = datetime.datetime.now() - datetime.datetime.fromtimestamp(os.path.getmtime(DASHBOARD_DATA_PATH))
+    except os.error:
+        return "Failure: unable to read monthly_attendees.csv"
+    if time_since_last_update < DASHBOARD_DATA_TIMING_WINDOW:
+        return "Success: dashboard last updated {} ago".format(time_since_last_update)
+    return "Failure: dashboard last updated {} ago".format(time_since_last_update)
+
+
+def dashboard_data_status():
+    return {"name": "Dashboard Data", "vitals": [dashboard_data_updating()]}
+
+
 @app.route('/health')
 def health():
     return jsonify({"products": [
@@ -155,6 +172,7 @@ def health():
         airtable_backup_status(),
         facebook_data_status(),
         latest_pledgers_status(),
+        dashboard_data_status(),
     ]})
 
 
