@@ -20,6 +20,7 @@ S3_BUCKET = "dxe-backup"
 S3_BACKUP_DIR = "dashboard"
 S3_ACCESS_KEY = os.environ["AIRTABLE_BACKUP_AWS_ACCESS_KEY_ID"]
 S3_SECRET_KEY = os.environ["AIRTABLE_BACKUP_AWS_SECRET_ACCESS_KEY"]
+AUTH_HEADER = {"Authorization": "Bearer {}".format(os.environ["FACEBOOK_APP_ACCESS_TOKEN"])}
 
 
 def chunks(l, n):
@@ -43,7 +44,7 @@ def links_to_ids(links):
         r = requests.post(
             "https://graph.facebook.com/v2.5",
             data={"batch": batch_req},
-            headers={"Authorization": "Bearer {}".format(os.environ["FACEBOOK_APP_ACCESS_TOKEN"])}
+            headers=AUTH_HEADER,
         )
         data = r.json()
         for i, res in enumerate(data):
@@ -76,7 +77,7 @@ def get_events(_id):
     while next_page_url:
         r = requests.get(
             next_page_url,
-            headers={"Authorization": "Bearer {}".format(os.environ["FACEBOOK_APP_ACCESS_TOKEN"])}
+            headers=AUTH_HEADER,
         )
         data = r.json()
         if 'data' in data and len(data['data']) > 0:
@@ -103,7 +104,7 @@ def get_event_participants(_id, rsvp_type):
     while next_page_url:
         r = requests.get(
             next_page_url,
-            headers={"Authorization": "Bearer {}".format(os.environ["FACEBOOK_APP_ACCESS_TOKEN"])}
+            headers=AUTH_HEADER,
         )
         data = r.json()
         if 'data' in data and len(data['data']) > 0:

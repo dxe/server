@@ -1,9 +1,12 @@
 ## Dashboard
 
 The dashboard is an attempt to provide metrics on how DxE is doing. Currently,
-this means pulling data from the Facebook Graph API into a postgresql db, and
-generating csvs from that data, exposing that data on the server to be graphed
-<somewhere>.
+this means pulling data from the [Facebook
+Graph API](https://developers.facebook.com/docs/graph-api/reference) into
+a postgresql db, and generating csvs from that data, exposing that data on the
+server to be graphed <somewhere>. For development, it can be very helpful to use
+the [Facebook Graph API
+Explorer](https://developers.facebook.com/tools/explorer/145634995501895/).
 
 Here is the data currently being exposed:
 * [Monthly event attendee counts](dxetech.org/dashboard/monthly_attendees.csv)
