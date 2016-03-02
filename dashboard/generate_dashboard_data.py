@@ -168,7 +168,10 @@ def get_attendances(events):
         attendances.extend(interested_users)
     for a in attendances:
         a["id"] = hashlib.sha224(a["id"]).hexdigest()  # don't want to know who is who, just that they're unique
-    return attendances
+
+    seen = set()  # Very rarely, by some Facebook magic, some users can RSVP to the same event twice with different RSVP statuses
+    # so we need to remove duplicates...
+    return [a for a in attendances if not (a["id"] in seen or seen.add(a["id"]))]
 
 
 def load_to_db(data, columns, table_name, cursor):
