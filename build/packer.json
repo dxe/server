@@ -6,6 +6,11 @@
     "size": "512mb",
     "image": "ubuntu-14-04-x64",
     "snapshot_name": "dxe-image-{{timestamp}}"
+  },
+  {
+    "type": "docker",
+    "image": "ubuntu:14.04",
+    "export_path": "image.tar"
   }],
   "provisioners": [
     {
@@ -13,7 +18,7 @@
       "inline": [
         "sleep 30",
         "sudo apt-get update",
-        "sudo apt-get install -y python-dev python-pip nginx upstart libpq-dev",
+        "sudo apt-get install -y python-dev python-pip nginx upstart libpq-dev libssl-dev libffi-dev build-essential wget",
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
         "sudo apt-get install -y php5-fpm",
         "sudo apt-get install -y php5-curl",
