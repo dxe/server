@@ -18,6 +18,7 @@
       "ssh_username": "ubuntu",
       "ssh_password": "ubuntu",
       "ssh_timeout": "20m",
+      "headless": true,
       "http_directory": "build/virtualbox",
       "boot_command" : [
         "<esc><esc><enter><wait>",
@@ -30,11 +31,28 @@
         "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
         "initrd=/install/initrd.gz -- <enter>"
       ],
-      "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
+      "shutdown_command": "echo 'ubuntu' | sudo -S shutdown -P now"
     }
   ],
   "provisioners": [
     {
+      "type": "shell",
+      "inline": ["sleep 30"]
+    }, {
+      "type": "file",
+      "source": "build/conf/sudoers-ubuntu-init.conf",
+      "destination": "/tmp/sudoers-ubuntu-init",
+      "only": ["virtualbox-iso"]
+    }, {
+      "type": "shell",
+      "execute_command": "echo 'ubuntu' | sudo -S sh '{{.Path}}'",
+      "inline": [
+        "mv /tmp/sudoers-ubuntu-init /etc/sudoers.d/sudoers-ubuntu-init",
+        "chown root:root /etc/sudoers.d/sudoers-ubuntu-init",
+        "chmod 440 /etc/sudoers.d/sudoers-ubuntu-init"
+      ],
+      "only": ["virtualbox-iso"]
+    }, {
       "type": "shell",
       "inline": [
         "sleep 30",
@@ -43,6 +61,7 @@
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
         "sudo apt-get install -y php5-fpm",
         "sudo apt-get install -y php5-curl",
+        "sudo apt-get install -y build-essential libssl-dev libffi-dev python-dev # for cryptography package",
         "sudo mkdir -p /opt",
         "sudo chown ubuntu:ubuntu /opt",
         "mkdir -p /opt/dxe/airtable",
@@ -67,7 +86,10 @@
     }, {
       "type": "shell",
       "inline": [
-        "cat /tmp/authorized_keys >> /home/ubuntu/.ssh/authorized_keys"
+        "mkdir -p /home/ubuntu/.ssh",
+        "chmod 700 /home/ubuntu/.ssh",
+        "cat /tmp/authorized_keys >> /home/ubuntu/.ssh/authorized_keys",
+        "chmod 600 /home/ubuntu/.ssh/authorized_keys"
       ]
     }, {
       "type": "file",
