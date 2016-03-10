@@ -1,7 +1,8 @@
-#Server Build, Deploy, Connect, and Test Server
+# Server Build, Deploy, Connect, and Test Server
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 
 - [What's on the server?](#whats-on-the-server)
   - [Cron Jobs](#cron-jobs)
@@ -9,6 +10,7 @@
   - [Facebook Data API Proxy](#facebook-data-api-proxy)
   - [Liberation Pledge Latest Pledgers Proxy](#liberation-pledge-latest-pledgers-proxy)
   - [Attendance App](#attendance-app)
+  - [Dashboard Data](#dashboard-data)
 - [Background](#background)
   - [Build](#build)
     - [Changing the build](#changing-the-build)
@@ -19,45 +21,44 @@
   - [Deploy](#deploy-1)
   - [Connect](#connect)
     - [Hold up, what ssh-key?](#hold-up-what-ssh-key)
-- [Test Server](#test-server)
-- [Test Subdomain](#test-subdomain)
+- [Test Locally With Virtualbox](#test-locally-with-virtualbox)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-##What's on the server?
-###Cron Jobs
+## What's on the server?
+### Cron Jobs
 See [build/crontab](build/crontab).
 
 * Airtable backup to S3.
 * Chapter map data update.
 * Facebook to dashboard data dump.
 
-###The Chapter Map!
+### The Chapter Map!
 [A map](http://dxetech.org/maps/chapter_map.html) of all the DxE chapters, pulled
 from our activist database.
 
-###Facebook Data API Proxy
+### Facebook Data API Proxy
 A proxy to make a subset of requests to the [Facebook Graph
 API](https://developers.facebook.com/docs/graph-api).
 [Example.](http://dxetech.org/facebook/attending_event?event_id=122831071398421)
 
-###Liberation Pledge Latest Pledgers Proxy
+### Liberation Pledge Latest Pledgers Proxy
 An endpoint to get the latest pledgers to [The Liberation
 Pledge](http://www.liberationpledge.com/). They are stored in a google
 spreadsheet, so this uses [Google's Sheet
 API](https://developers.google.com/google-apps/spreadsheets/?hl=en) to grab them.
 [Example.](http://dxetech.org/pledge/latest_pledgers/2)
 
-###Attendance App
+### Attendance App
 A simple [web page](http://dxetech.org/attend) for organizers to create events and mark who attended it in the airtable database.
 
-###Dashboard Data
+### Dashboard Data
 Metrics pulled from fb, saved in our db, exposed through the server, and displayed <somewhere>.
 
 
-##Background
-###Build
+## Background
+### Build
 
 Run `make build` to build a new image.
 
@@ -73,7 +74,7 @@ We can then deploy that image a year later, on different sized instances, maybe
 30 at a time, and each will work exactly as the first instance was working before
 it was powered down.
 
-####Changing the build
+#### Changing the build
 Edit the file [build/packer.json](build/packer.json). You will likely want to add a step to the
 [shell provisioner](https://www.packer.io/docs/provisioners/shell.html), maybe
 to `apt-get install` software, or `pip install` python module requirements, or
@@ -82,7 +83,7 @@ provisioner](https://www.packer.io/docs/provisioners/file.html) to add files
 to the image.
 
 
-###Deploy
+### Deploy
 
 Run `make deploy` to deploy a new image.
 
@@ -101,14 +102,14 @@ versions of the server running at the same time, [costing unecessary
 moolah](https://media.giphy.com/media/qbMEvt2tl5flC/giphy.gif). This also means
 you need to `git pull` before doing anything with terraform.
 
-####Changing the deploy
+#### Changing the deploy
 It's unlikely we'll need to do this. However, we may sometimes need to get a bigger
 instance, or add another instance, or add ssh keys, To do these things, edit the
 file [deploy/deploy.tf](deploy/deploy.tf) and refer to the [terraform docs for
 AWS](https://www.terraform.io/docs/providers/aws/).
 
 
-##Build+Deploy+Connect Process
+## Build+Deploy+Connect Process
 In order to build and deploy, you need to be authorized to spin up
 instances for the build and deploy steps. Running servers costs money,
 so that's why you aren't authorized already. The AWS token is stored
@@ -121,7 +122,7 @@ shell by running:
 
 If you use `make build`, the environmental variables will be set for you.
 
-###Build
+### Build
 
 ```
 make build
@@ -141,7 +142,7 @@ folder so it's used in the deploy step:
 make set_image IMAGE=ami-44ab902e
 ```
 
-###Deploy
+### Deploy
 
 First, make sure you've set the image in the `make set_image` step
 above. Now to deploy the image, run:
@@ -166,7 +167,7 @@ To undeploy, or destroy, the server and dns record, run:
 terraform destroy
 ```
 
-###Connect
+### Connect
 
 You need to get the ip address from AWS. Make sure your
 terraform.tfstate file is up to date (`git pull`) and then run the
@@ -189,7 +190,7 @@ If you want to test what commands you need to add to the build process to
 add your new feature, bring up a test server and connect to that instead of the
 production server. See below for instructions on setting up a test server.
 
-####Hold up, what ssh-key?
+#### Hold up, what ssh-key?
 
 You need do make an ssh key
 [(steps 1-2 here)](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2),
@@ -199,3 +200,31 @@ name it 'dxe_aws_id_rsa', and add the public key to
 If you can't afford to redeploy, have someone else ssh in and add the public key
 to the end of the file ~/.ssh/authorized_keys. This won't work after the next
 deploy unless [deploy.tf](deploy/deploy.tf) is updated as well.
+
+## Test Locally With Virtualbox and Vagrant
+
+You can test the server locally by building it for virtual box. First, install virtualbox and vagrant:
+
+```
+sudo apt-get install virtualbox-qt virtualbox-guest-additions-iso vagrant
+```
+
+Then run the following to build a virtual box image packaged as a vagrant box:
+
+```
+make build-virtualbox
+```
+
+Then cd to `vagrant/` and run `vagrant up` to bring up the machine.
+Its IP is 192.168.50.4. You can connect to it by going to
+http://192.168.50.4 in your browser. You can ssh into it with `vagrant
+ssh`. The password is 'ubuntu'.
+
+Basic vagrant commands:
+
+```
+vagrant up # start vagrant box
+vagrant halt # stop vagrant box
+vagrant ssh # ssh into vagrant box
+vagrant destroy # destroy vagrant box
+```
