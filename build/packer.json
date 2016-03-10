@@ -338,5 +338,11 @@
         "/opt/dxe/dashboard/run_generate_dashboard_data.sh views_only"
       ]
     }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "only": ["virtualbox-iso"]
+    }
   ]
 }
