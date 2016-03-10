@@ -21,7 +21,7 @@
   - [Deploy](#deploy-1)
   - [Connect](#connect)
     - [Hold up, what ssh-key?](#hold-up-what-ssh-key)
-- [Test Locally With Virtualbox](#test-locally-with-virtualbox)
+- [Test Locally With Virtualbox and Vagrant](#test-locally-with-virtualbox-and-vagrant)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
