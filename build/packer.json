@@ -1,11 +1,14 @@
 {
   "builders": [
   {
-    "type": "digitalocean",
-    "region": "sfo1",
-    "size": "512mb",
-    "image": "ubuntu-14-04-x64",
-    "snapshot_name": "dxe-image-{{timestamp}}"
+    "type": "amazon-ebs",
+    "region": "us-east-1",
+    "source_ami": "ami-fce3c696",
+    "instance_type": "t2.micro",
+    "ssh_username": "ubuntu",
+    "ami_name": "dxe-image-{{timestamp}}",
+    "vpc_id": "vpc-9bc4d6fe",
+    "subnet_id": "subnet-3d0c6216"
   }],
   "provisioners": [
     {
@@ -17,16 +20,31 @@
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
         "sudo apt-get install -y php5-fpm",
         "sudo apt-get install -y php5-curl",
+        "sudo mkdir -p /opt",
+        "sudo chown ubuntu:ubuntu /opt",
         "mkdir -p /opt/dxe/airtable",
         "mkdir -p /opt/dxe/dashboard",
         "mkdir -p /opt/dxe/facebook",
         "mkdir -p /opt/dxe/health",
         "mkdir -p /opt/dxe/latest_pledgers",
         "mkdir -p /opt/dxe/logs",
+        "sudo mkdir -p /var/www",
+        "sudo chown ubuntu:ubuntu /var/www",
         "mkdir -p /var/www/maps",
         "mkdir -p /var/www/dashboard",
-        "mkdir -p /usr/share/php/attend",
-        "mkdir -p /var/www/attend/images"
+        "mkdir -p /var/www/attend/images",
+        "sudo mkdir -p /usr/share/php/attend",
+        "sudo chown ubuntu:ubuntu /usr/share/php/attend",
+        "sudo chown ubuntu:ubuntu /etc/init"
+      ]
+    }, {
+      "type": "file",
+      "source": "build/conf/authorized_keys",
+      "destination": "/tmp/authorized_keys"
+    }, {
+      "type": "shell",
+      "inline": [
+        "cat /tmp/authorized_keys >> /home/ubuntu/.ssh/authorized_keys"
       ]
     }, {
       "type": "file",
@@ -248,11 +266,11 @@
       "inline": [
         "sudo chmod +x /opt/dxe/airtable/run_generate_members_data.sh",
         "/opt/dxe/airtable/run_generate_members_data.sh",
-        "sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php5/fpm/php.ini",
+        "sudo sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php5/fpm/php.ini",
         "wget https://github.com/google/google-api-php-client/archive/1.1.5.tar.gz",
         "gunzip 1.1.5.tar.gz",
         "tar xvf 1.1.5.tar",
-        "mv google-api-php-client-1.1.5 /usr/share/php/google-api-php-client"
+        "sudo mv google-api-php-client-1.1.5 /usr/share/php/google-api-php-client"
       ]
     },
 

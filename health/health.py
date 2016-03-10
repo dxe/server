@@ -40,9 +40,9 @@ app = Flask(__name__)
 def this_server_ip():
     """Get the ip address of this server."""
     try:
-        # Using digitalocean's metadata api
-        # https://www.digitalocean.com/community/tutorials/an-introduction-to-droplet-metadata
-        r = requests.get("http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address", timeout=.5)
+        # Using ec2's metadata api
+        # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
+        r = requests.get("http://169.254.169.254/latest/meta-data/public-ipv4", timeout=.5)
         return r.text
     except:
         return "localhost"
