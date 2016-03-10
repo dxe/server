@@ -201,16 +201,30 @@ If you can't afford to redeploy, have someone else ssh in and add the public key
 to the end of the file ~/.ssh/authorized_keys. This won't work after the next
 deploy unless [deploy.tf](deploy/deploy.tf) is updated as well.
 
-## Test Locally With Virtualbox
+## Test Locally With Virtualbox and Vagrant
 
-You can test the server locally by building it for virtual box. First, install virtualbox:
+You can test the server locally by building it for virtual box. First, install virtualbox and vagrant:
 
 ```
-sudo apt-get install virtualbox-qt virtualbox-guest-additions-iso
+sudo apt-get install virtualbox-qt virtualbox-guest-additions-iso vagrant
 ```
 
-Then run the following to build a virtual box image:
+Then run the following to build a virtual box image packaged as a vagrant box:
 
 ```
 make build-virtualbox
+```
+
+Then cd to `vagrant/` and run `vagrant up` to bring up the machine.
+Its IP is 192.168.50.4. You can connect to it by going to
+http://192.168.50.4 in your browser. You can ssh into it with `vagrant
+ssh`. The password is 'ubuntu'.
+
+Basic vagrant commands:
+
+```
+vagrant up # start vagrant box
+vagrant halt # stop vagrant box
+vagrant ssh # ssh into vagrant box
+vagrant destroy # destroy vagrant box
 ```

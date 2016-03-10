@@ -342,6 +342,7 @@
   "post-processors": [
     {
       "type": "vagrant",
+      "output": "vagrantbox/packer_dxe_virtualbox.box",
       "only": ["virtualbox-iso"]
     }
   ]
