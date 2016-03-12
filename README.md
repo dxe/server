@@ -206,7 +206,11 @@ deploy unless [deploy.tf](deploy/deploy.tf) is updated as well.
 You can test the server locally by building it for virtual box. First, install virtualbox and vagrant:
 
 ```
-sudo apt-get install virtualbox-qt virtualbox-guest-additions-iso vagrant
+On Ubuntu:
+$ sudo apt-get install virtualbox-qt virtualbox-guest-additions-iso vagrant
+On OS X:
+$ brew cask install virtualbox
+$ brew cask install vagrant
 ```
 
 Then run the following to build a virtual box image packaged as a vagrant box:
