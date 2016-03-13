@@ -1,1 +1,1 @@
-config.image_id = "ami-47af942d"
+config.image_id = "ami-58717732"

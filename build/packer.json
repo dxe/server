@@ -59,8 +59,7 @@
         "sudo apt-get update",
         "sudo apt-get install -y python-dev python-pip nginx upstart libpq-dev",
         "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postfix",
-        "sudo apt-get install -y php5-fpm",
-        "sudo apt-get install -y php5-curl",
+        "sudo apt-get install -y php5 php5-gd php5-mysql php5-curl php5-fpm mariadb-client curl",
         "sudo apt-get install -y build-essential libssl-dev libffi-dev python-dev # for cryptography package",
         "sudo mkdir -p /opt",
         "sudo chown ubuntu:ubuntu /opt",
@@ -78,6 +77,24 @@
         "sudo mkdir -p /usr/share/php/attend",
         "sudo chown ubuntu:ubuntu /usr/share/php/attend",
         "sudo chown ubuntu:ubuntu /etc/init"
+      ]
+    }, {
+      "type": "file",
+      "source": "drupal",
+      "destination": "/var/www/drupal"
+    }, {
+      "type": "file",
+      "source": "config/drupal.settings.php",
+      "destination": "/var/www/drupal/sites/default/settings.php"
+    }, {
+      "type": "file",
+      "source": "config/civicrm.settings.php",
+      "destination": "/var/www/drupal/sites/default/civicrm.settings.php"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo chown -R www-data:www-data /var/www/drupal",
+        "sudo chmod u+w /var/www/drupal/sites/default"
       ]
     }, {
       "type": "file",
@@ -119,6 +136,16 @@
         "sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default",
         "sudo rm /etc/nginx/sites-enabled/default",
         "sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default"
+      ]
+    }, {
+      "type": "file",
+      "source": "build/conf/drupal-nginx.conf",
+      "destination": "/tmp/drupal-nginx.conf"
+    }, {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/drupal-nginx.conf /etc/nginx/sites-available/civicrm.dxetech.org",
+        "sudo ln -s /etc/nginx/sites-available/civicrm.dxetech.org /etc/nginx/sites-enabled/civicrm.dxetech.org"
       ]
     },
 
