@@ -4557,6 +4557,10 @@ CREATE TABLE `civicrm_contribution` (
     ,     INDEX `UI_contrib_payment_instrument_id`(
         payment_instrument_id
   )
+  ,     INDEX `index_total_amount_receive_date`(
+        total_amount
+      , receive_date
+  )
   ,     INDEX `index_source`(
         source
   )

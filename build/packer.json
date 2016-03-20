@@ -91,10 +91,16 @@
       "source": "config/civicrm.settings.php",
       "destination": "/var/www/drupal/sites/default/civicrm.settings.php"
     }, {
+      "type": "file",
+      "source": "config/civicrm-files/persist",
+      "destination": "/var/www/drupal/sites/default/files/civicrm/persist",
+    }, {
       "type": "shell",
       "inline": [
         "sudo chown -R www-data:www-data /var/www/drupal",
         "sudo chmod u+w /var/www/drupal/sites/default"
+	"sudo chmod 0444 /var/www/drupal/sites/default/settings.php",
+	"sudo chmod 0644 /var/www/drupal/sites/default/civicrm.settings.php",
       ]
     }, {
       "type": "file",
