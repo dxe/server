@@ -1,4 +1,3 @@
-bower_components/
 node_modules/
 terraform.tfstate.backup
 packer_cache/
