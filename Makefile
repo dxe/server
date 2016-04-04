@@ -1,4 +1,11 @@
-.PHONY: build deploy set_image get_machine_ip
+.PHONY: setup build build-virtualbox deploy set_image get_machine_ip
+
+setup:
+	git submodule update --init
+# Download packer if it isn't installed.
+	hash packer &> /dev/null || echo "Download packer: https://www.packer.io/downloads.html"
+# Download terraform if it isn't installed.
+	hash terraform &> /dev/null || echo "Download terraform: https://www.terraform.io/downloads.html"
 
 build:
 	. config/aws.sh && packer build -only=amazon-ebs build/packer.json

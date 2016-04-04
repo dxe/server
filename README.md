@@ -58,6 +58,11 @@ Metrics pulled from fb, saved in our db, exposed through the server, and display
 
 
 ## Background
+### Setup
+
+Run `make setup` to set up your environment by updating your
+submodules
+
 ### Build
 
 Run `make build` to build a new image.
@@ -122,6 +127,15 @@ shell by running:
 
 If you use `make build`, the environmental variables will be set for you.
 
+### Setup
+
+```
+make setup
+```
+
+Sets up your environment by updating your submodules.
+
+
 ### Build
 
 ```
@@ -132,14 +146,14 @@ saying something like:
 ```
 --> amazon-ebs: AMIs were created:
 
-us-east-1: ami-44ab902e
+us-east-1: ami-xxxxxxxx
 ```
 
 Then run the following command to copy the image id to the deploy
 folder so it's used in the deploy step:
 
 ```
-make set_image IMAGE=ami-44ab902e
+make set_image IMAGE=ami-xxxxxxxx
 ```
 
 ### Deploy
