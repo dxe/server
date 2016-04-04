@@ -21,6 +21,7 @@ $(function(){
         var ytString = "";
         var siteString = "";
         var organizersString = "";
+        var calendarString = "";
 
         if(chapter["website"]){
           siteString = "<li>Check out <a target='_blank' href='" + chapter.website + "'>our website</a>!</li>";
@@ -37,6 +38,9 @@ $(function(){
         if(chapter["organizers"]){
           organizersString = "<li>Meet <a target='_blank' href='" + chapter.organizers + "'>our organizers</a>!</li>";
         }
+        if(chapter["calendar"]){
+          calendarString = "<li><a target='_blank' href='" + chapter.calendar + "'>Calendar.</a></li>";
+        }
 
         var contentString = '<div id="content">'+
             '<div id="siteNotice">'+
@@ -48,6 +52,7 @@ $(function(){
               contactString +
               fbString +
               ytString +
+              calendarString +
             '</ul>'+
             '</div>'+
             '</div>'+
