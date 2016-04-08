@@ -11,6 +11,8 @@ the Uptime Robot string matching rules would need to be updated.
 """
 import datetime
 import os
+import logging
+from logging.handlers import RotatingFileHandler
 
 from boto.s3.connection import S3Connection
 from flask import Flask, jsonify
@@ -35,6 +37,10 @@ DASHBOARD_DATA_PATH = "/var/www/dashboard/monthly_attendees.csv"
 LOG_LOCATION = "/opt/dxe/logs/health"
 
 app = Flask(__name__)
+file_handler = RotatingFileHandler(LOG_LOCATION, maxBytes=100000, backupCount=100)
+file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.DEBUG)
 
 
 def this_server_ip():
@@ -53,6 +59,7 @@ def chapter_map_data_updating():
     try:
         time_since_last_update = datetime.datetime.now() - datetime.datetime.fromtimestamp(os.path.getmtime(CHAPTER_DATA_PATH))
     except os.error:
+
         return "Failure: unable to read chapter_data.json"
     if time_since_last_update < CHAPTER_MAP_TIMING_WINDOW:
         return "Success: chapter map last updated {} ago".format(time_since_last_update)
@@ -177,10 +184,4 @@ def health():
 
 
 if __name__ == "__main__":
-    if not app.debug:
-        import logging
-        from logging.handlers import RotatingFileHandler
-        file_handler = RotatingFileHandler(LOG_LOCATION, maxBytes=100000, backupCount=100)
-        file_handler.setLevel(logging.WARNING)
-        app.logger.addHandler(file_handler)
     app.run()
