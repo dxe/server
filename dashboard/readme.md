@@ -37,3 +37,10 @@ export DB_STRING="<dbstring>"
 ```
 
 Yay!
+
+## DB Modifications
+To modify the actual database, use the connection string to connect with `psql`,
+and do your thing. To modify the security group, or the size of the db, or that
+higher level stuff, then copy the `dashboard.tfstate` file in the config/ repo
+into this directory as `terraform.tfstate`, modify the `db.tf` file as necessary
+ and `terraform apply`.
