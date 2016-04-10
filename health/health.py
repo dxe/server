@@ -159,12 +159,18 @@ def latest_pledgers_status():
 
 def dashboard_data_updating():
     """Test to see if the dashboard data is updating."""
+    app.logger.info ("dashboard data updating called")
     try:
-        time_since_last_update = datetime.datetime.now() - datetime.datetime.fromtimestamp(os.path.getmtime(DASHBOARD_DATA_PATH))
+        now = datetime.datetime.now()
+        then = datetime.datetime.fromtimestamp(os.path.getmtime(DASHBOARD_DATA_PATH))
+        time_since_last_update = now - then
     except os.error:
+        app.logger.debug("failexcept %s - %s = %s" % (now, then, time_since_last_update))
         return "Failure: unable to read monthly_attendees.csv"
     if time_since_last_update < DASHBOARD_DATA_TIMING_WINDOW:
+        app.logger.debug("success %s - %s = %s" % (now, then, time_since_last_update))
         return "Success: dashboard last updated {} ago".format(time_since_last_update)
+    app.logger.debug("failif %s - %s = %s" % (now, then, time_since_last_update))
     return "Failure: dashboard last updated {} ago".format(time_since_last_update)
 
 
