@@ -69,6 +69,7 @@
         "mkdir -p /opt/dxe/health",
         "mkdir -p /opt/dxe/latest_pledgers",
         "mkdir -p /opt/dxe/logs",
+        "sudo chown root /opt/dxe/logs",
         "sudo mkdir -p /var/www",
         "sudo chown ubuntu:ubuntu /var/www",
         "mkdir -p /var/www/maps",
