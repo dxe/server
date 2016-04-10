@@ -204,10 +204,6 @@ def pull_fb_data():
     conn = S3Connection(S3_ACCESS_KEY, S3_SECRET_KEY)
     bucket = conn.get_bucket(S3_BUCKET)
 
-    conn = psycopg2.connect(os.environ["DB_STRING"])
-    cur = conn.cursor()
-    cur.execute("TRUNCATE TABLE community, event, attendance CASCADE")
-
     chapter_links = get_facebook_chapter_links()
     community_ids = [{"id": i} for i in links_to_ids(chapter_links)]
     log.info("Found {} communities from airtable".format(len(community_ids)))
@@ -215,9 +211,6 @@ def pull_fb_data():
     key = S3_BACKUP_DIR + "/{}/communities.csv".format(datestr)
     write_string_to_s3(bucket, key, s)
     log.info("Wrote communities to s3://{}/{}".format(S3_BUCKET, key))
-    load_to_db(community_ids, ["id"], "community", cur)
-    conn.commit()
-    log.info("Loaded communities into the db.")
 
     events = get_community_events(community_ids)
     log.info("Found {} fb events".format(len(events)))
@@ -225,9 +218,6 @@ def pull_fb_data():
     key = S3_BACKUP_DIR + "/{}/events.csv".format(datestr)
     write_string_to_s3(bucket, key, s)
     log.info("Wrote events to s3://{}/{}".format(S3_BUCKET, key))
-    load_to_db(events, ["id", "name", "start_time", "community_id"], "event", cur)
-    conn.commit()
-    log.info("Loaded events into the db.")
 
     attendances = get_attendances(events)
     log.info("Found {} fb event attendances.".format(len(events)))
@@ -235,9 +225,19 @@ def pull_fb_data():
     key = S3_BACKUP_DIR + "/{}/attendances.csv".format(datestr)
     write_string_to_s3(bucket, key, s)
     log.info("Wrote attendances to s3://{}/{}".format(S3_BUCKET, key))
+
+    conn = psycopg2.connect(os.environ["DB_STRING"])
+    cur = conn.cursor()
+    cur.execute("TRUNCATE TABLE community, event, attendance CASCADE")
+    log.info("Truncated tables community, event, and attendance.")
+    load_to_db(community_ids, ["id"], "community", cur)
+    log.info("Loaded communities into the db.")
+    load_to_db(events, ["id", "name", "start_time", "community_id"], "event", cur)
+    log.info("Loaded events into the db.")
     load_to_db(attendances, ["id", "event_id", "rsvp_status"], "attendance", cur)
-    conn.commit()
     log.info("Loaded attendances into the db.")
+    conn.commit()
+    log.info("Transaction committed.")
 
 
 def generate_views(output_dir):
