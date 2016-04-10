@@ -13,6 +13,8 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 import requests
 import psycopg2
+import logging
+from logging.handlers import RotatingFileHandler
 
 from airtable.airtable import get_all_records
 
@@ -21,6 +23,13 @@ S3_BACKUP_DIR = "dashboard"
 S3_ACCESS_KEY = os.environ["AIRTABLE_BACKUP_AWS_ACCESS_KEY_ID"]
 S3_SECRET_KEY = os.environ["AIRTABLE_BACKUP_AWS_SECRET_ACCESS_KEY"]
 AUTH_HEADER = {"Authorization": "Bearer {}".format(os.environ["FACEBOOK_APP_ACCESS_TOKEN"])}
+
+LOG_LOCATION = "/opt/dxe/logs/generate_dashboard_data"
+file_handler = RotatingFileHandler(LOG_LOCATION, maxBytes=100000, backupCount=100)
+file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+log = logging.getLogger("log")
+log.addHandler(file_handler)
+log.setLevel(logging.INFO)
 
 
 def chunks(l, n):
@@ -201,22 +210,34 @@ def pull_fb_data():
 
     chapter_links = get_facebook_chapter_links()
     community_ids = [{"id": i} for i in links_to_ids(chapter_links)]
+    log.info("Found {} communities from airtable".format(len(community_ids)))
     s = rowdicts_to_csv_string(["id"], community_ids)
-    write_string_to_s3(bucket, S3_BACKUP_DIR + "/{}/communities.csv".format(datestr), s)
+    key = S3_BACKUP_DIR + "/{}/communities.csv".format(datestr)
+    write_string_to_s3(bucket, key, s)
+    log.info("Wrote communities to s3://{}/{}".format(S3_BUCKET, key))
     load_to_db(community_ids, ["id"], "community", cur)
     conn.commit()
+    log.info("Loaded communities into the db.")
 
     events = get_community_events(community_ids)
+    log.info("Found {} fb events".format(len(events)))
     s = rowdicts_to_csv_string(["id", "name", "start_time", "community_id"], events)
-    write_string_to_s3(bucket, S3_BACKUP_DIR + "/{}/events.csv".format(datestr), s)
+    key = S3_BACKUP_DIR + "/{}/events.csv".format(datestr)
+    write_string_to_s3(bucket, key, s)
+    log.info("Wrote events to s3://{}/{}".format(S3_BUCKET, key))
     load_to_db(events, ["id", "name", "start_time", "community_id"], "event", cur)
     conn.commit()
+    log.info("Loaded events into the db.")
 
     attendances = get_attendances(events)
+    log.info("Found {} fb event attendances.".format(len(events)))
     s = rowdicts_to_csv_string(["id", "event_id", "rsvp_status"], attendances)
-    write_string_to_s3(bucket, S3_BACKUP_DIR + "/{}/attendances.csv".format(datestr), s)
+    key = S3_BACKUP_DIR + "/{}/attendances.csv".format(datestr)
+    write_string_to_s3(bucket, key, s)
+    log.info("Wrote attendances to s3://{}/{}".format(S3_BUCKET, key))
     load_to_db(attendances, ["id", "event_id", "rsvp_status"], "attendance", cur)
     conn.commit()
+    log.info("Loaded attendances into the db.")
 
 
 def generate_views(output_dir):
@@ -242,6 +263,7 @@ COPY
 TO STDOUT
 WITH CSV HEADER""", f)
     conn.close()
+    log.info("Copied output of query into {}".format(output_dir+"/monthly_attendees.csv"))
 
 
 if __name__ == "__main__":
