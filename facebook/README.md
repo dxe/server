@@ -10,7 +10,7 @@ the results.
 
 Example request:
 ```
-GET http://dxetech.org/facebook/attending_event?event_id=1697430973810357
+GET http://dxetech.org/facebook/v2.6/122831071398421?fields=attending_count
 ```
 
 See [example_request.html](example_request.html) for an example in JavaScript without JQuery.
