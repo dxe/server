@@ -1,23 +1,31 @@
-<div id='count'>
-  9 million billion trillion hundred
-</div>
-<script>
-function updateCount() {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-      if(xmlhttp.status == 200) {
-        document.getElementById("count").innerHTML = JSON.parse (xmlhttp.responseText)["count"];
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DxE Facebook Graph API Proxy Example Request</title>
+  </head>
+  <body>
+    <div id="count">
+      9 million billion trillion hundred
+    </div>
+    <script>
+    function updateCount() {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+          if(xmlhttp.status == 200) {
+            document.getElementById("count").innerHTML = JSON.parse (xmlhttp.responseText)["attending_count"];
+          }
+          else {
+            alert(xmlhttp.status);
+            alert(xmlhttp.responseText);
+          }
+        }
       }
-      else {
-        alert(xmlhttp.status);
-        alert(xmlhttp.responseText);
-      }
-    }
-  }
 
-  xmlhttp.open("GET", "http://dxetech.org/facebook/attending_event?event_id=122831071398421", true);
-  xmlhttp.send();
-}
-updateCount();
-</script>
+      xmlhttp.open("GET", "http://dxetech.org/facebook/v2.6/122831071398421?fields=attending_count", true);
+      xmlhttp.send();
+    }
+    updateCount();
+    </script>
+  </body>
+</html>
